@@ -633,7 +633,7 @@
     /* Employee cards — big, side by side, each with own conversation */
     .employee-grid {
       display: flex; gap: 16px; padding: 20px 24px;
-      flex: 1; overflow-x: auto; align-items: stretch;
+      flex: 1; overflow-x: auto; align-items: flex-start;
     }
 
     .employee-card {
@@ -708,12 +708,66 @@
       flex-shrink: 0;
     }
 
+    /* Conversation summary bar (collapsed view) */
+    .conv-summary-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+      flex-shrink: 0;
+    }
+    .conv-summary-bar:hover { background: var(--bg3); }
+
+    .summary-left {
+      display: flex; align-items: center; gap: 8px;
+      overflow: hidden; flex: 1;
+    }
+
+    .summary-msg-count {
+      font-family: var(--mono); font-size: 10px; color: var(--text4);
+      white-space: nowrap;
+    }
+
+    .summary-preview {
+      font-size: 11px; color: var(--text3);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    .conv-expand-btn {
+      font-size: 12px; color: var(--text4);
+      transition: transform .25s ease;
+      flex-shrink: 0; margin-left: 8px;
+    }
+    .conv-expand-btn.rotated { transform: rotate(180deg); }
+
+    /* Activity pulse dot */
+    @keyframes convPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(1.4); }
+    }
+    .activity-pulse {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green);
+      animation: convPulse 1.2s ease infinite;
+      display: none; flex-shrink: 0;
+    }
+    .activity-pulse.active { display: inline-block; }
+
     /* Conversation area inside each card */
     .emp-conversation {
-      flex: 1; overflow-y: auto;
+      overflow-y: auto;
       padding: 12px 14px;
       display: flex; flex-direction: column; gap: 8px;
-      min-height: 200px;
+      transition: max-height .35s ease, padding .25s ease, opacity .25s ease;
+    }
+
+    .emp-conversation.collapsed {
+      max-height: 0; padding: 0 14px; overflow: hidden; opacity: 0;
+    }
+
+    .emp-conversation.expanded {
+      max-height: 600px; opacity: 1; overflow-y: auto;
     }
 
     .conv-header {
@@ -986,6 +1040,33 @@
     .kb-entry-strategy { font-size: 10px; color: var(--text3); margin-top: 2px; line-height: 1.4; }
     .kb-entry-meta { font-family: var(--mono); font-size: 8px; color: var(--text4); margin-top: 3px; }
     .kb-empty { font-family: var(--mono); font-size: 10px; color: var(--text4); font-style: italic; }
+
+    /* ── SKILL TREE SECTIONS ── */
+    .kb-section { margin-bottom: 16px; }
+    .kb-section:last-child { margin-bottom: 0; }
+    .kb-section-header {
+      font-family: var(--mono); font-size: 10px; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .kb-section-count { color: var(--text4); }
+    .kb-section-dot {
+      width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+    }
+    .kb-dot-active { background: #22c55e; box-shadow: 0 0 4px rgba(34,197,94,.4); }
+    .kb-dot-rejected { background: #ef4444; box-shadow: 0 0 4px rgba(239,68,68,.4); }
+
+    .kb-entry.kb-entry-rejected {
+      background: rgba(239, 68, 68, .08);
+      border-left: 2px solid rgba(239, 68, 68, .4);
+      padding-left: 8px; border-radius: 4px;
+    }
+    .kb-entry-rejected .kb-entry-icon { color: #ef4444; }
+    .kb-entry-rejected .kb-entry-name { color: #fca5a5; }
+    .kb-entry-reason {
+      font-family: var(--mono); font-size: 9px; color: #ef4444;
+      margin-top: 2px; font-style: italic;
+    }
 
     /* ── LEARNING TIMELINE PANEL ── */
     .timeline-panel-header {
@@ -1267,8 +1348,27 @@
             <div class="kb-panel-title">Accumulated Knowledge</div>
             <button class="kb-clear-btn" onclick="clearKnowledgeBase()">Clear</button>
           </div>
-          <div id="kb-list">
-            <div class="kb-empty" id="kb-empty">No skills yet — run a batch to start learning...</div>
+
+          <!-- Active Skills Section -->
+          <div class="kb-section">
+            <div class="kb-section-header">
+              <span class="kb-section-dot kb-dot-active"></span>
+              Active Skills <span id="kb-active-count" class="kb-section-count">(0)</span>
+            </div>
+            <div id="kb-active-list">
+              <div class="kb-empty" id="kb-active-empty">No skills yet — run a batch to start learning...</div>
+            </div>
+          </div>
+
+          <!-- Rejected Skills Section -->
+          <div class="kb-section">
+            <div class="kb-section-header">
+              <span class="kb-section-dot kb-dot-rejected"></span>
+              Rejected <span id="kb-rejected-count" class="kb-section-count">(0)</span>
+            </div>
+            <div id="kb-rejected-list">
+              <div class="kb-empty" id="kb-rejected-empty">No rejected skills yet.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1507,9 +1607,14 @@
       tlCount = 0;
       document.getElementById('tl-count').textContent = '(0)';
       document.getElementById('tl-list').innerHTML = '<div class="tl-empty" id="tl-empty">Timeline will populate as agents encounter conflicts...</div>';
+      kbActiveCount = 0;
+      kbRejectedCount = 0;
+      document.getElementById('kb-active-count').textContent = '(0)';
+      document.getElementById('kb-rejected-count').textContent = '(0)';
+      document.getElementById('kb-rejected-list').innerHTML = '<div class="kb-empty" id="kb-rejected-empty">No rejected skills yet.</div>';
       fetch(BASE_URL + '/knowledge-base').then(function(r){return r.json();}).then(function(d){
         if (d.skills && d.skills.length) {
-          kbCount = 0; document.getElementById('kb-list').innerHTML = '';
+          kbActiveCount = 0; document.getElementById('kb-active-list').innerHTML = '';
           d.skills.forEach(function(s){ addKBEntry(s, s.source_agent || 'Previous batch'); });
         }
       }).catch(function(){});
@@ -1535,6 +1640,46 @@
     }
 
     let activeConvKey = {};  // empId -> current leadIdx being shown
+    let pulseTimers = {};    // empId -> timeout id for pulse auto-off
+
+    function toggleConversation(empId) {
+      const panel = document.getElementById(`emp-conv-${empId}`);
+      const chevron = document.getElementById(`emp-chevron-${empId}`);
+      if (!panel) return;
+      const isCollapsed = panel.classList.contains('collapsed');
+      if (isCollapsed) {
+        panel.classList.remove('collapsed');
+        panel.classList.add('expanded');
+        chevron?.classList.add('rotated');
+        setTimeout(() => { panel.scrollTop = panel.scrollHeight; }, 350);
+      } else {
+        panel.classList.remove('expanded');
+        panel.classList.add('collapsed');
+        chevron?.classList.remove('rotated');
+      }
+    }
+
+    function updateSummaryBar(empId, leadIdx) {
+      const emp = employeeMap[empId];
+      if (!emp) return;
+      const msgs = emp._convMessages?.[leadIdx] || [];
+      const count = msgs.length;
+      const countEl = document.getElementById(`emp-msg-count-${empId}`);
+      const previewEl = document.getElementById(`emp-preview-${empId}`);
+      const pulseEl = document.getElementById(`emp-pulse-${empId}`);
+      if (countEl) countEl.textContent = count + (count === 1 ? ' message' : ' messages');
+      if (previewEl && count > 0) {
+        const last = msgs[count - 1];
+        const text = last.role === 'tool_call' ? '🔧 ' + (last.tool || 'tool call') : (last.text || '').replace(/<[^>]*>/g, '');
+        previewEl.textContent = text.length > 50 ? text.substring(0, 50) + '...' : text;
+      }
+      // Pulse the activity dot
+      if (pulseEl) pulseEl.classList.add('active');
+      clearTimeout(pulseTimers[empId]);
+      pulseTimers[empId] = setTimeout(() => {
+        if (pulseEl) pulseEl.classList.remove('active');
+      }, 3000);
+    }
 
     function addEmployeeCard(emp) {
       const grid = document.getElementById('employee-grid');
@@ -1562,7 +1707,15 @@
           <div class="emp-status-tag idle" id="emp-status-${emp.id}">Idle</div>
         </div>
         <div class="emp-lead-tabs">${tabsHtml}</div>
-        <div class="emp-conversation" id="emp-conv-${emp.id}">
+        <div class="conv-summary-bar" id="emp-summary-${emp.id}" onclick="toggleConversation('${emp.id}')">
+          <div class="summary-left">
+            <div class="activity-pulse" id="emp-pulse-${emp.id}"></div>
+            <span class="summary-msg-count" id="emp-msg-count-${emp.id}">0 messages</span>
+            <span class="summary-preview" id="emp-preview-${emp.id}">Waiting for assignment...</span>
+          </div>
+          <div class="conv-expand-btn" id="emp-chevron-${emp.id}">&#9662;</div>
+        </div>
+        <div class="emp-conversation collapsed" id="emp-conv-${emp.id}">
           <div class="emp-conv-placeholder">Waiting for assignment...</div>
         </div>
       `;
@@ -1583,8 +1736,9 @@
         const tab = document.getElementById(`emp-tab-${empId}-${idx}`);
         if (tab) tab.classList.toggle('active-tab', idx === leadIdx);
       });
-      // Re-render conversation
+      // Re-render conversation and summary
       renderEmpConv(empId, leadIdx);
+      updateSummaryBar(empId, leadIdx);
     }
 
     function renderEmpConv(empId, leadIdx) {
@@ -1631,15 +1785,32 @@
         dot.className = 'emp-lead-dot dot-active';
         const tag = document.getElementById(`emp-status-${empId}`);
         if (tag) { tag.className = 'emp-status-tag active'; tag.textContent = 'Active'; }
-        // Auto-switch to this conversation
-        switchEmpConv(empId, leadIdx);
-        // Clear previous messages for this lead
-        const emp = employeeMap[empId];
-        if (emp) emp._convMessages[leadIdx] = [];
+        // Auto-switch to this conversation tab (but keep collapsed)
+        activeConvKey[empId] = leadIdx;
+        const emp2 = employeeMap[empId];
+        if (emp2) {
+          (emp2.assigned_leads || []).forEach(idx => {
+            const t = document.getElementById(`emp-tab-${empId}-${idx}`);
+            if (t) t.classList.toggle('active-tab', idx === leadIdx);
+          });
+          emp2._convMessages[leadIdx] = [];
+        }
         renderEmpConv(empId, leadIdx);
+        // Activate pulse
+        const pulseEl = document.getElementById(`emp-pulse-${empId}`);
+        if (pulseEl) pulseEl.classList.add('active');
+        const previewEl = document.getElementById(`emp-preview-${empId}`);
+        if (previewEl) previewEl.textContent = 'Conversation starting...';
+        const countEl = document.getElementById(`emp-msg-count-${empId}`);
+        if (countEl) countEl.textContent = '0 messages';
       }
       else if (status === 'done') {
         dot.className = 'emp-lead-dot dot-done';
+        // Stop pulse
+        const pulseEl = document.getElementById(`emp-pulse-${empId}`);
+        if (pulseEl) pulseEl.classList.remove('active');
+        // Update summary with final count
+        updateSummaryBar(empId, leadIdx);
         // Check if all leads done for this employee
         const emp = employeeMap[empId];
         if (emp) {
@@ -1661,6 +1832,10 @@
       if (!emp) return;
       if (!emp._convMessages[leadIdx]) emp._convMessages[leadIdx] = [];
       emp._convMessages[leadIdx].push(msg);
+      // Update summary bar with latest info
+      if (activeConvKey[empId] === leadIdx) {
+        updateSummaryBar(empId, leadIdx);
+      }
       // Only render if this is the currently visible conversation for this employee
       if (activeConvKey[empId] === leadIdx) {
         const panel = document.getElementById(`emp-conv-${empId}`);
@@ -1734,24 +1909,46 @@
     }
 
     /* ── KNOWLEDGE BASE ── */
-    let kbCount = 0;
+    let kbActiveCount = 0;
+    let kbRejectedCount = 0;
+    function updateKBTabCount() {
+      document.getElementById('kb-count').textContent = '(' + (kbActiveCount + kbRejectedCount) + ')';
+    }
     function addKBEntry(skill, agentName) {
-      const list = document.getElementById('kb-list');
-      const empty = document.getElementById('kb-empty');
+      const list = document.getElementById('kb-active-list');
+      const empty = document.getElementById('kb-active-empty');
       if (empty) empty.remove();
       const div = document.createElement('div');
       div.className = 'kb-entry';
       const now = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
       div.innerHTML = '<div class="kb-entry-icon">&#9889;</div><div class="kb-entry-content"><div class="kb-entry-name">' + (skill.skill_name||'') + '</div><div class="kb-entry-strategy">' + (skill.strategy||'') + '</div><div class="kb-entry-meta">Learned by ' + agentName + ' &middot; ' + now + '</div></div>';
       list.appendChild(div);
-      kbCount++;
-      document.getElementById('kb-count').textContent = '(' + kbCount + ')';
+      kbActiveCount++;
+      document.getElementById('kb-active-count').textContent = '(' + kbActiveCount + ')';
+      updateKBTabCount();
+    }
+    function addRejectedKBEntry(skill, agentName, reason) {
+      const list = document.getElementById('kb-rejected-list');
+      const empty = document.getElementById('kb-rejected-empty');
+      if (empty) empty.remove();
+      const div = document.createElement('div');
+      div.className = 'kb-entry kb-entry-rejected';
+      const now = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      div.innerHTML = '<div class="kb-entry-icon">&#10007;</div><div class="kb-entry-content"><div class="kb-entry-name">' + (skill.skill_name||'') + '</div><div class="kb-entry-strategy">' + (skill.strategy||'') + '</div><div class="kb-entry-reason">' + (reason||'') + '</div><div class="kb-entry-meta">Rejected from ' + agentName + ' &middot; ' + now + '</div></div>';
+      list.appendChild(div);
+      kbRejectedCount++;
+      document.getElementById('kb-rejected-count').textContent = '(' + kbRejectedCount + ')';
+      updateKBTabCount();
     }
 
     async function clearKnowledgeBase() {
       try { await fetch(BASE_URL + '/knowledge-base', {method:'DELETE'}); } catch(e) {}
-      document.getElementById('kb-list').innerHTML = '<div class="kb-empty" id="kb-empty">Knowledge cleared.</div>';
-      kbCount = 0;
+      document.getElementById('kb-active-list').innerHTML = '<div class="kb-empty" id="kb-active-empty">No skills yet — run a batch to start learning...</div>';
+      document.getElementById('kb-rejected-list').innerHTML = '<div class="kb-empty" id="kb-rejected-empty">No rejected skills yet.</div>';
+      kbActiveCount = 0;
+      kbRejectedCount = 0;
+      document.getElementById('kb-active-count').textContent = '(0)';
+      document.getElementById('kb-rejected-count').textContent = '(0)';
       document.getElementById('kb-count').textContent = '(0)';
     }
 
@@ -1948,6 +2145,7 @@
           if (mgrStrip2) { mgrStrip2.classList.add('mgr-rejected'); setTimeout(() => mgrStrip2.classList.remove('mgr-rejected'), 2000); }
           document.getElementById('mgr-strategy').textContent = `Rejected: ${data.reason}`;
           addFeedItem(`Johnny rejected "${data.skill.skill_name}" from ${data.employeeName} — ${data.reason}`, 'feed-red');
+          addRejectedKBEntry(data.skill, data.employeeName, data.reason);
           // Track rejected skill so it doesn't get re-discovered by another employee
           rejectedSkills.push(data.skill);
           break;

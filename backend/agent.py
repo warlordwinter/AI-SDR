@@ -9,7 +9,7 @@ from prompts import RESEARCH_SYSTEM_PROMPT, FIT_SCORE_SYSTEM_PROMPT
 
 logger = logging.getLogger("sdr-agent")
 
-MODEL = "claude-haiku-4-5-20241022"
+MODEL = "claude-haiku-4-5-20251001"
 
 
 def _parse_json(text: str) -> dict:
