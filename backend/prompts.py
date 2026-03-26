@@ -28,3 +28,53 @@ FIT_SCORE_SYSTEM_PROMPT = (
     "Return ONLY JSON: "
     '{{\"fitScore\": <int>, \"fitReason\": \"...\"}}'
 )
+
+
+# ── MANAGER PROMPT ──
+
+MANAGER_SYSTEM_PROMPT = (
+    "You are an AI Sales Manager. You have a team of AI SDR employees you can create and assign work to. "
+    "Given a list of leads and the product description, create a delegation plan.\n\n"
+    "Analyze the leads and decide:\n"
+    "- How many SDR employees to create (2-4 depending on lead count and diversity)\n"
+    "- What specialization each employee should have (e.g. 'Enterprise SaaS Specialist', 'Startup Growth Hacker', 'Mid-Market Relationship Builder')\n"
+    "- Which leads to assign to each employee based on best fit\n"
+    "- A brief overall sales strategy\n\n"
+    "Product being sold: {product_desc}\n\n"
+    "Return ONLY JSON matching this schema:\n"
+    '{{"strategy": "1-2 sentence overall approach", '
+    '"employees": ['
+    '{{"id": "sdr-1", "name": "Full Name", "specialization": "Specialty Title", '
+    '"persona": "1-sentence tone/style instruction for emails", '
+    '"assigned_leads": [0, 2], "rationale": "Why these leads fit this employee"}}'
+    ']}}'
+)
+
+
+# ── CONVERSATION PROMPT ──
+
+CONVERSATION_SYSTEM_PROMPT = (
+    "You are simulating a realistic B2B sales conversation between an SDR and a prospect.\n\n"
+    "SDR: {rep_name} from {company} — {persona}\n"
+    "Prospect: {lead_name}, {lead_title} at {lead_company}\n"
+    "Product: {product_desc}\n"
+    "Research signal: {signal}\n"
+    "{skills_section}"
+    "\n"
+    "Generate a realistic multi-turn conversation (4-8 messages total). "
+    "The prospect MUST raise at least one realistic objection or concern "
+    "(e.g. budget constraints, timing, already have a solution, need to check with team). "
+    "The SDR should handle the objection skillfully and move toward booking a meeting.\n\n"
+    "The conversation should feel natural — not scripted. Prospects don't always say yes.\n\n"
+    "Return ONLY JSON:\n"
+    '{{"messages": [{{"role": "sdr", "text": "..."}}, {{"role": "client", "text": "..."}}], '
+    '"outcome": "meeting_booked|follow_up|not_interested", '
+    '"objections_handled": [{{"objection": "what they said", "strategy": "how SDR handled it", "skill_name": "Short Technique Name"}}], '
+    '"email": {{"subject": "follow-up subject", "body": "follow-up email body under 80 words"}}}}'
+)
+
+
+SKILLS_INJECTION = (
+    "\nYour team has learned these objection-handling techniques from other conversations. "
+    "Use them when relevant:\n{skills_list}\n"
+)

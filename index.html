@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SDR//AI — Autonomous Outreach Agent</title>
+  <title>SDR//AI — AI Sales Manager</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
@@ -905,6 +905,260 @@
       50%      { opacity:0; }
     }
 
+    /* ─────────────────────────────────────────
+       SCREEN 5 — COMMAND CENTER
+    ───────────────────────────────────────── */
+    #screen-command { flex-direction: column; min-height: 100vh; }
+
+    .cmd-body {
+      flex: 1; display: grid;
+      grid-template-columns: 1fr 260px;
+      grid-template-rows: auto 1fr auto;
+      gap: 0; overflow: hidden; min-height: 0;
+    }
+
+    /* Manager strip */
+    .manager-strip {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 20px;
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+
+    .manager-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, #0d2018, #1a4030);
+      border: 2px solid var(--green-bd);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: 16px; font-weight: 500;
+      color: var(--green); flex-shrink: 0;
+      position: relative;
+    }
+
+    .manager-avatar.thinking {
+      animation: managerPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes managerPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(74, 254, 138, .3); }
+      50% { box-shadow: 0 0 20px 6px rgba(74, 254, 138, .15); }
+    }
+
+    .manager-info { flex: 1; min-width: 0; }
+    .manager-name { font-size: 15px; font-weight: 500; color: var(--green); }
+    .manager-role { font-family: var(--mono); font-size: 10px; color: var(--text4); text-transform: uppercase; letter-spacing: .08em; margin-top: 2px; }
+    .manager-strategy { font-size: 12px; color: var(--text2); margin-top: 6px; font-weight: 300; line-height: 1.5; }
+
+    .manager-stats {
+      display: flex; gap: 20px; flex-shrink: 0;
+    }
+
+    .mgr-stat {
+      text-align: center;
+    }
+
+    .mgr-stat-num { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--text); }
+    .mgr-stat-lbl { font-family: var(--mono); font-size: 9px; color: var(--text4); text-transform: uppercase; letter-spacing: .08em; }
+
+    /* Employee + conversation area */
+    .cmd-main {
+      display: flex; flex-direction: column;
+      overflow-y: auto; border-right: 1px solid var(--border);
+    }
+
+    /* Employee cards row */
+    .employee-grid {
+      display: flex; gap: 12px; padding: 18px 24px;
+      overflow-x: auto; flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .employee-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      min-width: 180px; max-width: 220px;
+      flex-shrink: 0;
+      animation: fadeSlideIn .4s ease both;
+      transition: border-color .3s, box-shadow .3s;
+      cursor: pointer;
+    }
+
+    .employee-card.active-emp {
+      border-color: var(--green-bd);
+      background: var(--green-bg);
+    }
+
+    .employee-card.skill-flash {
+      animation: skillFlash .6s ease;
+    }
+
+    @keyframes skillFlash {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(74, 254, 138, 0); }
+      50% { box-shadow: 0 0 16px 4px rgba(74, 254, 138, .25); }
+    }
+
+    .emp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+
+    .emp-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--bg3); border: 1px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .emp-avatar svg { opacity: .5; }
+
+    .emp-name { font-size: 12px; font-weight: 500; color: var(--text); }
+    .emp-spec { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 1px; }
+
+    .emp-leads { margin-top: 8px; }
+
+    .emp-lead-row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 3px 0; font-size: 11px; color: var(--text3);
+    }
+
+    .emp-lead-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Conversation panel */
+    .conversation-panel {
+      flex: 1; overflow-y: auto;
+      padding: 18px 24px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .conv-header {
+      font-family: var(--mono); font-size: 10px; color: var(--text4);
+      text-transform: uppercase; letter-spacing: .1em;
+      margin-bottom: 6px; flex-shrink: 0;
+    }
+
+    .chat-bubble {
+      max-width: 80%; padding: 10px 14px;
+      border-radius: 10px; font-size: 12px;
+      line-height: 1.6; animation: fadeSlideIn .25s ease both;
+    }
+
+    .bubble-sdr {
+      background: var(--green-bg); border: 1px solid var(--green-bd);
+      color: var(--text); align-self: flex-start; border-bottom-left-radius: 3px;
+    }
+
+    .bubble-client {
+      background: var(--bg3); border: 1px solid var(--border2);
+      color: var(--text2); align-self: flex-end; border-bottom-right-radius: 3px;
+    }
+
+    .bubble-label {
+      font-family: var(--mono); font-size: 9px;
+      text-transform: uppercase; letter-spacing: .06em;
+      margin-bottom: 4px;
+    }
+
+    .bubble-sdr .bubble-label { color: var(--green); }
+    .bubble-client .bubble-label { color: var(--text4); }
+
+    /* Skills panel (right sidebar) */
+    .skills-panel {
+      grid-row: 2 / 4;
+      display: flex; flex-direction: column;
+      overflow-y: auto; background: var(--bg2);
+    }
+
+    .skills-header {
+      font-family: var(--mono); font-size: 10px; color: var(--text4);
+      text-transform: uppercase; letter-spacing: .1em;
+      padding: 16px 16px 12px; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .skills-list { padding: 12px 16px; flex: 1; }
+
+    .skill-item {
+      padding: 10px 12px; margin-bottom: 8px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; animation: skillAppear .5s ease both;
+    }
+
+    @keyframes skillAppear {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .skill-name {
+      font-size: 11px; font-weight: 500; color: var(--green);
+      margin-bottom: 4px;
+    }
+
+    .skill-strategy {
+      font-size: 10px; color: var(--text3); line-height: 1.5;
+    }
+
+    .skill-source {
+      font-family: var(--mono); font-size: 9px; color: var(--text4);
+      margin-top: 4px;
+    }
+
+    .skills-empty {
+      padding: 20px 16px; text-align: center;
+      font-size: 11px; color: var(--text4); font-style: italic;
+    }
+
+    /* Activity feed */
+    .activity-feed {
+      grid-column: 1;
+      border-top: 1px solid var(--border);
+      padding: 10px 24px;
+      max-height: 120px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+
+    .feed-item {
+      font-family: var(--mono); font-size: 10px;
+      color: var(--text3); line-height: 1.5;
+      animation: fadeSlideIn .2s ease both;
+    }
+
+    .feed-time { color: var(--text4); margin-right: 8px; }
+    .feed-green { color: var(--green); }
+    .feed-amber { color: var(--amber); }
+
+    /* Broadcast notification */
+    .broadcast-bar {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: linear-gradient(90deg, var(--green-bg), #0d2018);
+      border-bottom: 1px solid var(--green-bd);
+      padding: 10px 28px;
+      font-family: var(--mono); font-size: 11px; color: var(--green);
+      display: flex; align-items: center; gap: 10px;
+      z-index: 100;
+      animation: broadcastSlide .4s ease both;
+    }
+
+    @keyframes broadcastSlide {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
+
+    .broadcast-bar .bc-icon { font-size: 14px; }
+
+    .cmd-review-btn {
+      margin: 16px 24px;
+      padding: 12px; width: calc(100% - 48px);
+      background: var(--green); color: #071409;
+      font-family: var(--sans); font-size: 13px; font-weight: 500;
+      border: none; border-radius: 8px; cursor: pointer;
+      transition: opacity .15s; flex-shrink: 0;
+    }
+    .cmd-review-btn:hover { opacity: .88; }
+    .cmd-review-btn:disabled { opacity: .3; cursor: default; background: var(--bg3); color: var(--text4); }
+
     /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -920,7 +1174,7 @@
     <div class="topbar">
       <div class="logo">SDR//AI</div>
       <div class="topbar-right">
-        <div class="topbar-meta">AUTONOMOUS OUTREACH AGENT</div>
+        <div class="topbar-meta">AI SALES MANAGER</div>
         <div class="demo-toggle" onclick="toggleDemoMode()">
           <span class="demo-dot" id="demo-dot-1"></span>
           <span class="demo-toggle-label">DEMO MODE</span>
@@ -934,8 +1188,8 @@
     <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px;">
       <div class="upload-center">
         <div class="upload-eyebrow">David AI Hackathon · March 26 2026</div>
-        <h1 class="upload-headline">Your AI sales rep.<br>Ready in seconds.</h1>
-        <p class="upload-sub">Upload a lead list and your agent will research every company,<br>write personalized emails, and queue them for send — automatically.</p>
+        <h1 class="upload-headline">Your AI sales team.<br>Ready in seconds.</h1>
+        <p class="upload-sub">Upload a lead list and your AI Sales Manager will build a team of SDR agents,<br>run personalized conversations, and learn from every interaction — automatically.</p>
 
         <div class="dropzone" id="dropzone">
           <input type="file" id="csv-input" accept=".csv" onchange="handleFile(this)" />
@@ -1129,6 +1383,73 @@
   </div>
 
 
+  <!-- ══════════════════════════════════════
+       SCREEN 5 — COMMAND CENTER
+  ══════════════════════════════════════ -->
+  <div id="screen-command" class="screen">
+    <div class="topbar">
+      <div class="logo">SDR//AI</div>
+      <div class="topbar-right">
+        <div class="topbar-meta" id="cmd-meta">SALES MANAGER</div>
+        <div class="demo-toggle" onclick="toggleDemoMode()">
+          <span class="demo-dot" id="demo-dot-5"></span>
+          <span class="demo-toggle-label">DEMO MODE</span>
+          <div class="demo-switch" id="demo-switch-5">
+            <div class="demo-switch-knob"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-body">
+      <!-- Manager strip -->
+      <div class="manager-strip">
+        <div class="manager-avatar thinking" id="mgr-avatar">SM</div>
+        <div class="manager-info">
+          <div class="manager-name" id="mgr-name">Sales Manager</div>
+          <div class="manager-role">AI SALES MANAGER</div>
+          <div class="manager-strategy" id="mgr-strategy">Analyzing your leads...</div>
+        </div>
+        <div class="manager-stats">
+          <div class="mgr-stat">
+            <div class="mgr-stat-num" id="mgr-emp-count">0</div>
+            <div class="mgr-stat-lbl">Agents</div>
+          </div>
+          <div class="mgr-stat">
+            <div class="mgr-stat-num" id="mgr-lead-count">0</div>
+            <div class="mgr-stat-lbl">Leads</div>
+          </div>
+          <div class="mgr-stat">
+            <div class="mgr-stat-num" id="mgr-skill-count">0</div>
+            <div class="mgr-stat-lbl">Skills</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main area: employees + conversation -->
+      <div class="cmd-main">
+        <div class="employee-grid" id="employee-grid"></div>
+        <div class="conv-header" style="padding: 18px 24px 0;" id="conv-header">Conversation</div>
+        <div class="conversation-panel" id="conversation-panel"></div>
+        <button class="cmd-review-btn" id="cmd-review-btn" disabled onclick="goToReview()">
+          Review all emails &rarr;
+        </button>
+      </div>
+
+      <!-- Skills panel (right sidebar) -->
+      <div class="skills-panel">
+        <div class="skills-header">Team Skills <span id="skills-count">(0)</span></div>
+        <div class="skills-list" id="skills-list">
+          <div class="skills-empty" id="skills-empty">Skills will appear here as agents learn from conversations</div>
+        </div>
+      </div>
+
+      <!-- Activity feed -->
+      <div class="activity-feed" id="activity-feed"></div>
+    </div>
+  </div>
+
+
   <script>
     /* ────────────────────────────────────────
        STATE
@@ -1245,7 +1566,7 @@
     }
 
     function syncDemoToggles() {
-      for (let i = 1; i <= 4; i++) {
+      for (let i = 1; i <= 5; i++) {
         const dot = document.getElementById(`demo-dot-${i}`);
         const sw = document.getElementById(`demo-switch-${i}`);
         if (dot) dot.classList.toggle('active', demoMode);
@@ -1300,7 +1621,7 @@
 
         const btn = document.getElementById('run-btn');
         btn.classList.add('visible');
-        btn.textContent = `Run agent on ${leadCount} leads →`;
+        btn.textContent = `Deploy Sales Team on ${leadCount} leads →`;
       };
       reader.readAsText(file);
     }
@@ -1317,125 +1638,439 @@
     }
 
     /* ────────────────────────────────────────
-       SCREEN 2 — PIPELINE
+       COMMAND CENTER STATE
+    ──────────────────────────────────────── */
+    let employeeMap = {};   // id -> employee data
+    let learnedSkills = []; // accumulated skills
+    let completedLeads = 0;
+
+    const PERSON_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0112 0v1"/></svg>`;
+
+    /* ────────────────────────────────────────
+       SCREEN 2 — PIPELINE (now routes to command center)
     ──────────────────────────────────────── */
     function startPipeline() {
       if (!leads.length) return;
-      showScreen('screen-pipeline');
+      showScreen('screen-command');
       sentLeads = new Set();
+      employeeMap = {};
+      learnedSkills = [];
+      completedLeads = 0;
 
       const repName    = document.getElementById('rep-name').value    || 'Your Rep';
       const company    = document.getElementById('company').value     || 'Your Company';
       const productDesc = document.getElementById('product-desc').value || 'AI-powered sales tooling';
 
-      document.getElementById('pipeline-meta').textContent =
-        `RUN #001 · ${leads.length} LEADS · ${new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}).toUpperCase()}`;
-
-      document.getElementById('progress-label').textContent = `0 / ${leads.length} complete`;
-
-      const tbody = document.getElementById('pipeline-tbody');
-      tbody.innerHTML = '';
       results = leads.map(() => null);
+      document.getElementById('mgr-lead-count').textContent = leads.length;
+      document.getElementById('cmd-meta').textContent = `SALES MANAGER · ${leads.length} LEADS`;
+      document.getElementById('employee-grid').innerHTML = '';
+      document.getElementById('conversation-panel').innerHTML = '';
+      document.getElementById('skills-list').innerHTML = '<div class="skills-empty" id="skills-empty">Skills will appear here as agents learn from conversations</div>';
+      document.getElementById('activity-feed').innerHTML = '';
+      document.getElementById('skills-count').textContent = '(0)';
+      document.getElementById('mgr-emp-count').textContent = '0';
+      document.getElementById('mgr-skill-count').textContent = '0';
+      document.getElementById('cmd-review-btn').disabled = true;
 
-      leads.forEach((lead, i) => {
-        const tr = document.createElement('tr');
-        tr.className = 'lead-row';
-        tr.style.animationDelay = (i * 80) + 'ms';
-        tr.innerHTML = `
-          <td>
-            <div class="lead-name">${lead.name || '—'}</div>
-            <div class="lead-title">${lead.title || ''}</div>
-          </td>
-          <td><div class="lead-co">${lead.company || '—'}</div></td>
-          <td>
-            <div class="status-cell">
-              <div class="status-dot dot-waiting" id="dot-${i}"></div>
-              <span class="status-text st-waiting" id="stxt-${i}">queued</span>
-            </div>
-          </td>
-          <td><div class="score-badge score-empty" id="score-${i}">—</div></td>
-          <td><button class="action-btn btn-view" id="abtn-${i}" disabled>view</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      runPipeline(repName, company, productDesc);
-    }
-
-    async function runPipeline(repName, company, productDesc) {
-      let doneCount = 0;
-
-      async function processLead(i) {
-        const lead = leads[i];
-        const dot  = document.getElementById(`dot-${i}`);
-        const stxt = document.getElementById(`stxt-${i}`);
-        const scoreBadge = document.getElementById(`score-${i}`);
-        const abtn = document.getElementById(`abtn-${i}`);
-
-        dot.className = 'status-dot dot-active';
-
-        // Animate through stages
-        for (const stage of PIPELINE_STAGES) {
-          stxt.className = 'status-text st-active';
-          stxt.textContent = stage;
-          await sleep(demoMode ? 300 + Math.random() * 200 : 500 + Math.random() * 600);
-        }
-
-        // ── API CALL ──────────────────────────────
-        let result;
-        if (demoMode) {
-          result = getDemoResult(lead, repName, company);
-        } else {
-          try {
-            result = await callAgentAPI(lead, repName, company, productDesc);
-          } catch (err) {
-            // Fallback mock so demo never breaks
-            result = mockResult(lead, repName, company);
-          }
-        }
-
-        results[i] = result;
-
-        // Update row
-        stxt.className = 'status-text st-done';
-        stxt.textContent = 'email ready';
-        dot.className = 'status-dot dot-done';
-
-        const score = result.fitScore || 7;
-        scoreBadge.textContent = score;
-        scoreBadge.className = 'score-badge ' + (score >= 8 ? 'score-high' : score >= 6 ? 'score-mid' : 'score-low');
-
-        abtn.textContent = 'view →';
-        abtn.className = 'action-btn btn-ready';
-        abtn.disabled = false;
-        abtn.onclick = () => openReview(i);
-
-        doneCount++;
-        const pct = Math.round((doneCount / leads.length) * 100);
-        document.getElementById('progress-fill').style.width = pct + '%';
-        document.getElementById('progress-label').textContent = `${doneCount} / ${leads.length} complete`;
-
-        if (doneCount === leads.length) {
-          document.getElementById('pipeline-title').textContent = 'Pipeline complete';
-          document.getElementById('pipeline-sub').textContent  = `${leads.length} personalized emails ready to review`;
-          const sendBtn = document.getElementById('send-all-btn');
-          sendBtn.disabled = false;
-          sendBtn.textContent = 'Review & send all emails →';
-        }
-      }
-
-      // Stagger starts slightly so rows light up one by one
-      for (let i = 0; i < leads.length; i++) {
-        processLead(i);
-        await sleep(350);
+      if (demoMode) {
+        runDemoBatch(repName, company, productDesc);
+      } else {
+        runBatchSSE(repName, company, productDesc);
       }
     }
 
     /* ────────────────────────────────────────
-       BACKEND API CALL
-       Replace BASE_URL with your FastAPI server
+       COMMAND CENTER — UI HELPERS
+    ──────────────────────────────────────── */
+    function addFeedItem(text, cls = '') {
+      const feed = document.getElementById('activity-feed');
+      const now = new Date().toLocaleTimeString('en-US', {hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const div = document.createElement('div');
+      div.className = 'feed-item';
+      div.innerHTML = `<span class="feed-time">${now}</span><span class="${cls}">${text}</span>`;
+      feed.appendChild(div);
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    function addEmployeeCard(emp) {
+      const grid = document.getElementById('employee-grid');
+      const card = document.createElement('div');
+      card.className = 'employee-card';
+      card.id = `emp-card-${emp.id}`;
+      card.style.animationDelay = (Object.keys(employeeMap).length * 150) + 'ms';
+
+      const leadsHtml = (emp.assigned_leads || []).map(idx => {
+        const l = leads[idx];
+        return `<div class="emp-lead-row" id="emp-lead-${emp.id}-${idx}">
+          <div class="emp-lead-dot dot-waiting" id="emp-dot-${emp.id}-${idx}"></div>
+          ${l ? l.name : 'Lead ' + idx}
+        </div>`;
+      }).join('');
+
+      card.innerHTML = `
+        <div class="emp-header">
+          <div class="emp-avatar">${PERSON_SVG}</div>
+          <div>
+            <div class="emp-name">${emp.name}</div>
+            <div class="emp-spec">${emp.specialization}</div>
+          </div>
+        </div>
+        <div class="emp-leads">${leadsHtml}</div>
+      `;
+      grid.appendChild(card);
+      employeeMap[emp.id] = emp;
+      document.getElementById('mgr-emp-count').textContent = Object.keys(employeeMap).length;
+    }
+
+    function updateLeadDot(empId, leadIdx, status) {
+      const dot = document.getElementById(`emp-dot-${empId}-${leadIdx}`);
+      if (!dot) return;
+      if (status === 'active') { dot.className = 'emp-lead-dot dot-active'; }
+      else if (status === 'done') { dot.className = 'emp-lead-dot dot-done'; }
+      else if (status === 'error') { dot.className = 'emp-lead-dot dot-error'; }
+    }
+
+    function addChatBubble(msg, empName) {
+      const panel = document.getElementById('conversation-panel');
+      const div = document.createElement('div');
+      const isSdr = msg.role === 'sdr';
+      div.className = `chat-bubble ${isSdr ? 'bubble-sdr' : 'bubble-client'}`;
+      const label = isSdr ? empName || 'SDR' : leads[0]?.name?.split(' ')[0] || 'Client';
+      div.innerHTML = `<div class="bubble-label">${label}</div>${msg.text}`;
+      panel.appendChild(div);
+      panel.scrollTop = panel.scrollHeight;
+    }
+
+    function addSkillToPanel(skill, empName) {
+      const list = document.getElementById('skills-list');
+      const empty = document.getElementById('skills-empty');
+      if (empty) empty.remove();
+
+      const div = document.createElement('div');
+      div.className = 'skill-item';
+      div.innerHTML = `
+        <div class="skill-name">${skill.skill_name}</div>
+        <div class="skill-strategy">${skill.strategy}</div>
+        <div class="skill-source">Learned by ${empName}</div>
+      `;
+      list.appendChild(div);
+      learnedSkills.push(skill);
+      document.getElementById('skills-count').textContent = `(${learnedSkills.length})`;
+      document.getElementById('mgr-skill-count').textContent = learnedSkills.length;
+    }
+
+    function showBroadcast(message) {
+      const bar = document.createElement('div');
+      bar.className = 'broadcast-bar';
+      bar.innerHTML = `<span class="bc-icon">&#9889;</span> ${message}`;
+      document.body.appendChild(bar);
+      // Flash all employee cards
+      document.querySelectorAll('.employee-card').forEach(c => {
+        c.classList.add('skill-flash');
+        setTimeout(() => c.classList.remove('skill-flash'), 600);
+      });
+      setTimeout(() => bar.remove(), 3500);
+    }
+
+    function markLeadComplete(leadIdx) {
+      completedLeads++;
+      const pct = Math.round((completedLeads / leads.length) * 100);
+      if (completedLeads === leads.length) {
+        document.getElementById('cmd-review-btn').disabled = false;
+        document.getElementById('mgr-strategy').textContent = `All ${leads.length} leads processed. ${learnedSkills.length} skills learned. Ready for review.`;
+        document.getElementById('mgr-avatar').classList.remove('thinking');
+        addFeedItem(`All leads complete — ${learnedSkills.length} skills learned`, 'feed-green');
+      }
+    }
+
+    /* ────────────────────────────────────────
+       BACKEND API — SSE BATCH
     ──────────────────────────────────────── */
     const BASE_URL = 'http://localhost:8000';
+
+    async function runBatchSSE(repName, company, productDesc) {
+      try {
+        const res = await fetch(`${BASE_URL}/run-batch`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ leads, repName, company, productDesc }),
+        });
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          const parts = buffer.split('\n\n');
+          buffer = parts.pop(); // keep incomplete chunk
+
+          for (const part of parts) {
+            if (!part.trim()) continue;
+            const lines = part.split('\n');
+            let event = 'message', data = '';
+            for (const line of lines) {
+              if (line.startsWith('event: ')) event = line.slice(7);
+              if (line.startsWith('data: ')) data = line.slice(6);
+            }
+            if (!data) continue;
+            try {
+              handleSSEEvent(event, JSON.parse(data));
+            } catch(e) { console.warn('SSE parse error', e); }
+          }
+        }
+      } catch (err) {
+        console.error('Batch SSE failed:', err);
+        addFeedItem('Connection error — falling back to demo mode', 'feed-amber');
+        runDemoBatch(
+          document.getElementById('rep-name').value || 'Your Rep',
+          document.getElementById('company').value || 'Your Company',
+          document.getElementById('product-desc').value || 'AI-powered sales tooling'
+        );
+      }
+    }
+
+    function handleSSEEvent(event, data) {
+      switch (event) {
+        case 'manager_thinking':
+          document.getElementById('mgr-strategy').textContent = data.message;
+          addFeedItem(data.message, 'feed-amber');
+          break;
+
+        case 'manager_plan':
+          document.getElementById('mgr-strategy').textContent = data.strategy || 'Delegation plan ready.';
+          addFeedItem(`Strategy: ${data.strategy}`, 'feed-green');
+          break;
+
+        case 'employee_created':
+          addEmployeeCard(data.employee);
+          addFeedItem(`Created agent: ${data.employee.name} — ${data.employee.specialization}`, 'feed-green');
+          break;
+
+        case 'employee_status':
+          updateLeadDot(data.employeeId, data.leadIdx, 'active');
+          addFeedItem(`${employeeMap[data.employeeId]?.name || data.employeeId}: ${data.stage} for ${leads[data.leadIdx]?.name || '?'}`);
+          // Update conversation header
+          document.getElementById('conv-header').textContent =
+            `${employeeMap[data.employeeId]?.name || 'Agent'} → ${leads[data.leadIdx]?.name || 'Lead'}`;
+          document.getElementById('conversation-panel').innerHTML = '';
+          break;
+
+        case 'conversation_message':
+          addChatBubble(data.message, employeeMap[data.employeeId]?.name);
+          break;
+
+        case 'skill_learned':
+          addSkillToPanel(data.skill, employeeMap[data.employeeId]?.name || data.employeeId);
+          addFeedItem(`New skill learned: ${data.skill.skill_name}`, 'feed-green');
+          break;
+
+        case 'manager_broadcast':
+          showBroadcast(data.message);
+          break;
+
+        case 'lead_complete':
+          updateLeadDot(data.employeeId, data.leadIdx, 'done');
+          results[data.leadIdx] = data.result;
+          markLeadComplete(data.leadIdx);
+          addFeedItem(`${leads[data.leadIdx]?.name || '?'} — conversation complete`, 'feed-green');
+          break;
+
+        case 'batch_complete':
+          addFeedItem(data.message, 'feed-green');
+          break;
+      }
+    }
+
+    /* ────────────────────────────────────────
+       DEMO MODE — SIMULATED BATCH
+    ──────────────────────────────────────── */
+    const DEMO_MANAGER = {
+      strategy: "Split the team by company stage — enterprise accounts need a consultative approach while high-growth startups respond better to urgency and ROI framing. Assigning specialists accordingly.",
+      employees: [
+        {
+          id: "sdr-1", name: "Maya Chen", specialization: "Enterprise Account Specialist",
+          persona: "Consultative, ROI-focused, references industry benchmarks",
+          assigned_leads: [0, 1, 3],
+          rationale: "VP+ titles at large companies — need senior-level consultative approach"
+        },
+        {
+          id: "sdr-2", name: "Jordan Park", specialization: "Growth-Stage Startup Expert",
+          persona: "Energetic, founder-friendly, emphasizes speed to value",
+          assigned_leads: [2, 4],
+          rationale: "Growth-stage companies exploring new motions — respond to agility messaging"
+        }
+      ]
+    };
+
+    const DEMO_CONVERSATIONS = {
+      0: { // Lattice
+        messages: [
+          {role: "sdr", text: "Hi Sarah, saw Lattice just closed the Series F — congrats. Doubling the sales org is a massive undertaking. Curious how you're thinking about ramping all those new SDRs."},
+          {role: "client", text: "Thanks! Yeah it's exciting but honestly a bit overwhelming. We're still figuring out the ramp plan."},
+          {role: "sdr", text: "Totally get it. Most teams at your stage tell us their new reps spend 60-70% of their time just researching accounts before sending a single email. What if you could cut that to near zero?"},
+          {role: "client", text: "That sounds great in theory but we've looked at tools before and they always require a ton of setup and the output quality isn't there."},
+          {role: "sdr", text: "Fair concern. What if I ran it live on 5 of your actual target accounts right now — no setup, just your ICP? You'd see the research quality and email output in real-time. Takes 10 minutes."},
+          {role: "client", text: "Okay that's actually pretty compelling. Let's do Thursday at 2pm?"},
+        ],
+        outcome: "meeting_booked",
+        objections_handled: [{
+          objection: "Tools require too much setup and output quality is poor",
+          strategy: "Offer a live demo on their actual accounts with zero setup to prove quality firsthand",
+          skill_name: "Zero-Setup Live Proof"
+        }],
+        email: {subject: "Thursday at 2pm — live demo on your accounts", body: "Hi Sarah,\n\nGreat chatting. As discussed, I'll run our AI on 5 of your actual target accounts live so you can see the research and email quality firsthand.\n\nThursday at 2pm works. I'll send a calendar invite.\n\n— Alex Rivera\nAcme Corp"},
+      },
+      1: { // Rippling
+        messages: [
+          {role: "sdr", text: "Hi Marcus, noticed Rippling is opening the Austin GTM hub — 150+ roles is a serious outbound investment. How are you thinking about the tech stack for those new reps?"},
+          {role: "client", text: "We're still evaluating. Honestly our main concern is adding yet another tool to the stack. We already have 6 sales tools."},
+          {role: "sdr", text: "Makes total sense — tool sprawl is real. What if this actually replaced 2-3 of those tools? We handle research, personalization, and sequencing in one layer. Net reduction in your stack."},
+          {role: "client", text: "Hmm that's interesting. But I'd need to see hard numbers on how it compares to what we have."},
+          {role: "sdr", text: "Absolutely. I can put together a side-by-side comparison specific to your current stack. Would 15 minutes next week work to walk through it?"},
+          {role: "client", text: "Sure, send me some times for Tuesday or Wednesday."},
+        ],
+        outcome: "meeting_booked",
+        objections_handled: [{
+          objection: "Already have too many sales tools — don't want to add another",
+          strategy: "Reframe the tool as a consolidator that replaces 2-3 existing tools, reducing stack complexity",
+          skill_name: "Stack Consolidation Reframe"
+        }],
+        email: {subject: "Side-by-side comparison for Rippling's sales stack", body: "Hi Marcus,\n\nThanks for the chat. I'll put together a comparison showing how we'd replace 2-3 tools in your current stack rather than adding to it.\n\nDoes Tuesday at 10am or Wednesday at 2pm work?\n\n— Alex Rivera\nAcme Corp"},
+      },
+      2: { // Loom
+        messages: [
+          {role: "sdr", text: "Hi Priya, exciting to see Loom going enterprise — the shift from PLG to outbound is one of the toughest GTM pivots. How's the SDR buildout going?"},
+          {role: "client", text: "It's early days. We're still not sure if we even need a full SDR team or if we should stay product-led."},
+          {role: "sdr", text: "That's the exact right question. What we've seen with other PLG-to-enterprise companies is that you don't need a huge team — you need 2-3 reps who can punch way above their weight with AI handling the research layer."},
+          {role: "client", text: "Interesting. But our budget is really tight since this is an experiment for us."},
+          {role: "sdr", text: "Totally understand. Our teams in similar spots typically see ROI within the first month — one booked meeting usually covers the cost. Want me to show you the math specific to Loom's deal sizes? Takes 15 minutes."},
+          {role: "client", text: "Yeah that would be helpful. Let's do next week."},
+        ],
+        outcome: "meeting_booked",
+        objections_handled: [{
+          objection: "Budget is tight since outbound is still experimental",
+          strategy: "Show that one booked meeting covers the cost — frame as low-risk experiment with fast ROI math",
+          skill_name: "Quick ROI Math"
+        }],
+        email: {subject: "ROI math for Loom's outbound experiment", body: "Hi Priya,\n\nGood chat! I'll pull together ROI numbers specific to Loom's deal sizes so you can see how quickly one booked meeting covers the investment.\n\nI'll send some times for next week.\n\n— Alex Rivera\nAcme Corp"},
+      },
+      3: { // Deel
+        messages: [
+          {role: "sdr", text: "Hi James, congrats on the Dubai and Singapore expansion. Scaling outbound across new markets is a beast — are your reps doing localized research manually right now?"},
+          {role: "client", text: "Yeah, and it's killing our velocity. But I'm skeptical any AI tool can handle the nuance of different markets."},
+          {role: "sdr", text: "Fair point. Actually, one of our team recently proved this works best with a live demo — mind if I run it on 5 of your actual target accounts in the Singapore market? No setup, you'll see the localization quality in real-time."},
+          {role: "client", text: "Alright, if you can show me Singapore-specific output that doesn't sound like it was written by someone who's never been to Asia, I'm in."},
+          {role: "sdr", text: "Challenge accepted. Let's book 15 minutes and I'll run it live. When works?"},
+          {role: "client", text: "How about Friday morning?"},
+        ],
+        outcome: "meeting_booked",
+        objections_handled: [{
+          objection: "Skeptical AI can handle multi-market localization nuance",
+          strategy: "Used the Zero-Setup Live Proof technique — offered to demonstrate on their actual target market accounts in real-time",
+          skill_name: "Market-Specific Live Demo"
+        }],
+        email: {subject: "Friday AM — Singapore market live demo", body: "Hi James,\n\nLooking forward to showing you live output on your Singapore target accounts. I'll make sure the localization quality speaks for itself.\n\nFriday morning — I'll send the invite.\n\n— Alex Rivera\nAcme Corp"},
+      },
+      4: { // Notion
+        messages: [
+          {role: "sdr", text: "Hi Elena, 40 new AEs at Notion — that's a big bet on outbound. How's the team keeping email quality consistent as you scale?"},
+          {role: "client", text: "It's a challenge. Honestly we're seeing quality drop as we onboard new reps. But we've been burned by automation tools that made emails feel robotic."},
+          {role: "sdr", text: "I hear that a lot — and it's usually because those tools template the email instead of templating the research. We do the opposite: deep research, then the email writes itself from real insights. Quality actually goes up with volume."},
+          {role: "client", text: "That's a different approach. But integrating with our existing tools could be a nightmare given our stack consolidation effort."},
+          {role: "sdr", text: "Actually, we've helped other teams going through stack consolidation — we can replace the research and personalization layers you're currently doing manually or with multiple tools. Net fewer tools, not more. Want me to put together a quick comparison specific to your stack?"},
+          {role: "client", text: "Yeah, let's take a look. Send me some times."},
+        ],
+        outcome: "meeting_booked",
+        objections_handled: [{
+          objection: "Previous automation tools made emails feel robotic",
+          strategy: "Distinguish between 'templating the email' vs 'templating the research' — position as research-first approach where quality scales with volume",
+          skill_name: "Research-First Differentiation"
+        }],
+        email: {subject: "Stack comparison for Notion's outbound scaling", body: "Hi Elena,\n\nGreat chat. I'll map out how we'd fit into (and simplify) your current stack rather than adding complexity.\n\nI'll send some times for this week.\n\n— Alex Rivera\nAcme Corp"},
+      },
+    };
+
+    async function runDemoBatch(repName, company, productDesc) {
+      // Manager thinking
+      handleSSEEvent('manager_thinking', {message: `Analyzing ${leads.length} leads and their company profiles...`});
+      await sleep(1200);
+
+      // Manager plan
+      handleSSEEvent('manager_plan', DEMO_MANAGER);
+      await sleep(600);
+
+      // Create employees
+      for (const emp of DEMO_MANAGER.employees) {
+        handleSSEEvent('employee_created', {employee: emp});
+        await sleep(500);
+      }
+
+      await sleep(400);
+
+      // Process leads per employee
+      for (const emp of DEMO_MANAGER.employees) {
+        for (const leadIdx of emp.assigned_leads) {
+          if (leadIdx >= leads.length) continue;
+
+          // Status: researching
+          handleSSEEvent('employee_status', {employeeId: emp.id, leadIdx, stage: 'researching company'});
+          await sleep(800);
+
+          handleSSEEvent('employee_status', {employeeId: emp.id, leadIdx, stage: 'starting conversation'});
+          await sleep(400);
+
+          // Stream conversation messages
+          const conv = DEMO_CONVERSATIONS[leadIdx];
+          if (conv) {
+            for (const msg of conv.messages) {
+              handleSSEEvent('conversation_message', {employeeId: emp.id, leadIdx, message: msg});
+              await sleep(600 + Math.random() * 400);
+            }
+
+            // Skills
+            for (const skill of conv.objections_handled) {
+              // Check if already learned
+              if (!learnedSkills.find(s => s.skill_name === skill.skill_name)) {
+                handleSSEEvent('skill_learned', {employeeId: emp.id, skill});
+                await sleep(300);
+                handleSSEEvent('manager_broadcast', {
+                  message: `${emp.name} discovered: "${skill.skill_name}" — sharing with all agents`,
+                  skill
+                });
+                await sleep(800);
+              }
+            }
+
+            // Build result compatible with review screen
+            const result = {
+              fitScore: [9, 8, 7, 9, 7][leadIdx] || 7,
+              fitReason: emp.rationale,
+              research: DEMO_RESULTS[leads[leadIdx]?.company]?.research || {
+                snapshot: 'Fast-growing company', signal: 'Expanding sales team',
+                painTags: ['outbound efficiency'], whyFit: 'Strong fit for AI SDR tooling'
+              },
+              email: conv.email,
+              conversation: conv.messages,
+              outcome: conv.outcome,
+            };
+            handleSSEEvent('lead_complete', {employeeId: emp.id, leadIdx, result});
+          }
+
+          await sleep(300);
+        }
+      }
+
+      handleSSEEvent('batch_complete', {
+        message: `All ${leads.length} leads processed. ${learnedSkills.length} skills learned across the team.`,
+        totalSkills: learnedSkills.length,
+        skills: learnedSkills,
+      });
+    }
 
     async function callAgentAPI(lead, repName, company, productDesc) {
       const res = await fetch(`${BASE_URL}/run-lead`, {
@@ -1446,24 +2081,6 @@
       if (!res.ok) throw new Error('API error');
       return res.json();
     }
-
-    /*
-      Expected API response shape:
-      {
-        fitScore: 9,
-        fitReason: "VP of Sales at high-growth SaaS...",
-        research: {
-          snapshot:  "What the company does...",
-          signal:    "Recent news or growth indicator...",
-          painTags:  ["tag1", "tag2", "tag3"],
-          whyFit:    "Why this lead is a strong match..."
-        },
-        email: {
-          subject: "Subject line here",
-          body:    "Full email body text..."
-        }
-      }
-    */
 
     /* ────────────────────────────────────────
        MOCK FALLBACK (demo safety net)

@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 import anthropic
 from tavily import TavilyClient
@@ -8,7 +9,7 @@ from prompts import RESEARCH_SYSTEM_PROMPT, EMAIL_SYSTEM_PROMPT, FIT_SCORE_SYSTE
 
 logger = logging.getLogger("sdr-agent")
 
-MODEL = "claude-sonnet-4-20250514"
+MODEL = "claude-haiku-4-5-20241022"
 
 
 def _parse_json(text: str) -> dict:
@@ -23,7 +24,7 @@ def _parse_json(text: str) -> dict:
 def _search_company(company: str) -> str:
     """Search for company info via Tavily. Returns raw results as string."""
     try:
-        client = TavilyClient()
+        client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
         query = f"{company} company news funding growth 2025 2026"
         logger.info("🔍 Tavily search: %s", query)
         results = client.search(query, max_results=5)
@@ -35,12 +36,13 @@ def _search_company(company: str) -> str:
 
 def _call_claude(system_prompt: str, user_content: str) -> dict:
     """Make a Claude API call and parse the JSON response."""
-    client = anthropic.Anthropic()
+    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
     message = client.messages.create(
         model=MODEL,
         max_tokens=1024,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
+        timeout=30.0,
     )
     raw = message.content[0].text
     return _parse_json(raw)
