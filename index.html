@@ -228,49 +228,6 @@
     .dz-loaded .dz-title { color: var(--green); }
     .dz-loaded { border-color: var(--green-bd); background: var(--green-bg); }
 
-    .upload-config {
-      margin-top: 24px;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 20px;
-      text-align: left;
-      display: none;
-    }
-
-    .upload-config.visible { display: block; }
-
-    .config-label {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text4);
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      margin-bottom: 10px;
-    }
-
-    .config-row {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .config-input {
-      background: var(--bg3);
-      border: 1px solid var(--border2);
-      border-radius: 7px;
-      padding: 9px 13px;
-      font-family: var(--sans);
-      font-size: 12px;
-      color: var(--text);
-      outline: none;
-      transition: border-color .15s;
-      width: 100%;
-    }
-
-    .config-input::placeholder { color: var(--text4); }
-    .config-input:focus { border-color: var(--green); }
-
     .run-btn {
       margin-top: 24px;
       width: 100%;
@@ -425,304 +382,10 @@
       white-space: nowrap;
     }
 
-    .send-all-btn {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      background: var(--green);
-      color: #071409;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: opacity .15s, transform .1s;
-    }
-
-    .send-all-btn:hover  { opacity: .88; transform: translateY(-1px); }
-    .send-all-btn:disabled {
-      opacity: .3;
-      cursor: default;
-      transform: none;
-      background: var(--bg3);
-      color: var(--text4);
-    }
 
     /* ─────────────────────────────────────────
-       SCREEN 3 — EMAIL REVIEW
+       SCREEN 3 — LEAD REVIEW
     ───────────────────────────────────────── */
-    #screen-review {
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .review-layout {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-      min-height: 0;
-    }
-
-    /* Lead sidebar */
-    .lead-sidebar {
-      width: 220px;
-      flex-shrink: 0;
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    .sidebar-header {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text4);
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      padding: 16px 16px 12px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .sidebar-item {
-      padding: 11px 16px;
-      cursor: pointer;
-      transition: background .12s;
-      border-left: 2px solid transparent;
-    }
-
-    .sidebar-item:hover { background: var(--bg2); }
-
-    .sidebar-item.active {
-      background: var(--bg2);
-      border-left-color: var(--green);
-    }
-
-    .si-name { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 2px; }
-    .sidebar-item.active .si-name { color: var(--green); }
-    .si-company { font-family: var(--mono); font-size: 10px; color: var(--text4); }
-
-    .si-score {
-      display: inline-block;
-      margin-top: 5px;
-      font-family: var(--mono);
-      font-size: 10px;
-      padding: 2px 7px;
-      border-radius: 4px;
-    }
-
-    /* Review main */
-    .review-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-height: 0;
-    }
-
-    .review-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .contact-row { display: flex; align-items: center; gap: 12px; }
-
-    .avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: var(--green-bg);
-      border: 1px solid var(--green-bd);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--mono);
-      font-size: 12px; font-weight: 500;
-      color: var(--green);
-      flex-shrink: 0;
-    }
-
-    .contact-name { font-size: 14px; font-weight: 500; color: var(--text); }
-    .contact-meta { font-size: 11px; color: var(--text3); margin-top: 1px; font-weight: 300; }
-
-    .fit-display { display: flex; align-items: center; gap: 8px; }
-    .fit-num { font-family: var(--mono); font-size: 24px; font-weight: 500; color: var(--green); }
-    .fit-lbl { font-family: var(--mono); font-size: 10px; color: var(--text4); text-transform: uppercase; letter-spacing: .06em; line-height: 1.5; }
-
-    .review-scroll {
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .review-section {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .section-lbl {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text4);
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      margin-bottom: 14px;
-    }
-
-    .research-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .r-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 14px;
-    }
-
-    .rc-lbl {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text4);
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      margin-bottom: 7px;
-    }
-
-    .rc-val {
-      font-size: 12px;
-      color: var(--text2);
-      line-height: 1.6;
-      font-weight: 300;
-    }
-
-    .rc-val strong { color: #c8c4be; font-weight: 500; }
-
-    .pain-tag {
-      display: inline-block;
-      background: var(--amber-bg);
-      border: 1px solid #2a2010;
-      color: #c8904a;
-      font-size: 10px;
-      font-family: var(--mono);
-      padding: 3px 8px;
-      border-radius: 4px;
-      margin: 2px 3px 2px 0;
-    }
-
-    .email-subject-row {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-    }
-
-    .email-subj-lbl {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text4);
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      white-space: nowrap;
-    }
-
-    .email-subj-val {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-    }
-
-    .email-body-wrap {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 18px 20px;
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--text2);
-      line-height: 1.85;
-      white-space: pre-wrap;
-      position: relative;
-    }
-
-    .email-body-wrap .hi { color: #c8c4be; font-weight: 500; }
-    .email-body-wrap .name { color: var(--green); font-weight: 500; }
-
-    .copy-btn {
-      position: absolute;
-      top: 10px; right: 10px;
-      font-family: var(--mono);
-      font-size: 10px;
-      padding: 4px 10px;
-      background: var(--bg3);
-      color: var(--text3);
-      border: 1px solid var(--border2);
-      border-radius: 5px;
-      cursor: pointer;
-      transition: color .15s;
-    }
-
-    .copy-btn:hover { color: var(--text); }
-
-    /* Action bar */
-    .review-actions {
-      display: flex;
-      gap: 10px;
-      padding: 16px 24px;
-      border-top: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .ra-btn {
-      font-family: var(--sans);
-      font-size: 12px;
-      font-weight: 500;
-      padding: 9px 20px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      transition: opacity .15s, transform .1s;
-    }
-
-    .ra-btn:hover { opacity: .8; transform: translateY(-1px); }
-    .ra-send { background: var(--green); color: #071409; }
-    .ra-edit { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
-    .ra-skip { background: transparent; color: var(--text4); border: 1px solid var(--border); }
-    .ra-send-all { background: var(--amber); color: #1a1400; }
-    .ra-analytics { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); margin-left: auto; }
-
-    /* Edit mode inputs */
-    .email-subj-edit {
-      flex: 1;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-      background: var(--bg3);
-      border: 1px solid var(--green);
-      border-radius: 5px;
-      padding: 6px 10px;
-      outline: none;
-    }
-    .email-body-edit {
-      display: none;
-      width: 100%;
-      min-height: 180px;
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--text2);
-      background: var(--bg3);
-      border: 1px solid var(--green);
-      border-radius: 6px;
-      padding: 14px 16px;
-      line-height: 1.85;
-      resize: vertical;
-      outline: none;
-    }
 
     /* Analytics screen */
     #screen-analytics {
@@ -853,163 +516,6 @@
     .status-badge.skipped { background: var(--bg3); color: var(--text4); border: 1px solid var(--border2); }
 
     /* ─────────────────────────────────────────
-       SCREEN 4 — SEQUENCE VIEW
-    ───────────────────────────────────────── */
-    #screen-sequence {
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .seq-body {
-      flex: 1;
-      padding: 28px 32px 32px;
-      overflow-y: auto;
-    }
-
-    .seq-title {
-      font-size: 20px;
-      font-weight: 500;
-      letter-spacing: -.02em;
-      margin-bottom: 4px;
-    }
-
-    .seq-sub {
-      font-size: 13px;
-      color: var(--text3);
-      font-weight: 300;
-      margin-bottom: 24px;
-    }
-
-    .seq-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px 24px;
-      margin-bottom: 14px;
-      animation: fadeSlideIn .35s ease both;
-    }
-
-    .seq-card-header {
-      margin-bottom: 18px;
-    }
-
-    .seq-lead-name {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 2px;
-    }
-
-    .seq-lead-meta {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text4);
-    }
-
-    .seq-timeline {
-      display: flex;
-      align-items: flex-start;
-      gap: 0;
-      position: relative;
-    }
-
-    .seq-node {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      min-width: 0;
-    }
-
-    .seq-node-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      margin-bottom: 8px;
-      z-index: 1;
-    }
-
-    .seq-node-dot.sent {
-      background: var(--green);
-      box-shadow: 0 0 6px rgba(74, 254, 138, .3);
-    }
-
-    .seq-node-dot.scheduled {
-      background: var(--amber);
-      box-shadow: 0 0 6px rgba(232, 196, 74, .2);
-    }
-
-    .seq-node-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 500;
-      margin-bottom: 3px;
-    }
-
-    .seq-node-label.sent { color: var(--green); }
-    .seq-node-label.scheduled { color: var(--amber); }
-
-    .seq-node-status {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text4);
-      margin-bottom: 3px;
-    }
-
-    .seq-node-date {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text4);
-      text-align: center;
-    }
-
-    .seq-connector {
-      position: absolute;
-      top: 5px;
-      left: calc(50% + 8px);
-      right: calc(-50% + 8px);
-      height: 1px;
-      background: var(--border);
-      z-index: 0;
-    }
-
-    .seq-node:last-child .seq-connector { display: none; }
-
-    .seq-preview-btn {
-      margin-top: 8px;
-      font-family: var(--mono);
-      font-size: 10px;
-      padding: 3px 10px;
-      background: var(--bg3);
-      color: var(--text4);
-      border: 1px solid var(--border2);
-      border-radius: 4px;
-      cursor: pointer;
-      transition: color .15s;
-    }
-
-    .seq-preview-btn:hover { color: var(--text2); }
-
-    .seq-preview-content {
-      display: none;
-      margin-top: 8px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 12px;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text3);
-      line-height: 1.7;
-      white-space: pre-wrap;
-      text-align: left;
-      max-width: 260px;
-    }
-
-    .seq-preview-content.open { display: block; }
-
     .topbar-back {
       font-family: var(--mono);
       font-size: 11px;
@@ -1070,19 +576,17 @@
     #screen-command { flex-direction: column; min-height: 100vh; }
 
     .cmd-body {
-      flex: 1; display: grid;
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr auto auto;
-      gap: 0; overflow: hidden; min-height: 0;
+      flex: 1; display: flex; flex-direction: column;
+      overflow: hidden; min-height: 0;
     }
 
     /* Manager strip */
     .manager-strip {
-      grid-column: 1 / -1;
       display: flex; align-items: center; gap: 20px;
       padding: 20px 28px;
       border-bottom: 1px solid var(--border);
       background: var(--bg2);
+      flex-shrink: 0;
     }
 
     .manager-avatar {
@@ -1090,10 +594,10 @@
       background: linear-gradient(135deg, #0d2018, #1a4030);
       border: 2px solid var(--green-bd);
       display: flex; align-items: center; justify-content: center;
-      font-family: var(--mono); font-size: 16px; font-weight: 500;
       color: var(--green); flex-shrink: 0;
       position: relative;
     }
+    .manager-avatar svg { stroke: var(--green); }
 
     .manager-avatar.thinking {
       animation: managerPulse 1.5s ease-in-out infinite;
@@ -1306,10 +810,6 @@
 
     /* Activity feed */
     .activity-feed {
-      grid-column: 1;
-      border-top: 1px solid var(--border);
-      padding: 8px 24px;
-      max-height: 80px; overflow-y: auto;
       display: flex; flex-direction: column; gap: 3px;
     }
 
@@ -1322,6 +822,25 @@
     .feed-time { color: var(--text4); margin-right: 8px; }
     .feed-green { color: var(--green); }
     .feed-amber { color: var(--amber); }
+    .feed-red { color: #ff5c5c; }
+
+    /* Johnny approve/reject flash */
+    .manager-strip.mgr-approved {
+      animation: mgrApproveFlash 1.5s ease;
+    }
+    .manager-strip.mgr-rejected {
+      animation: mgrRejectFlash 2s ease;
+    }
+    @keyframes mgrApproveFlash {
+      0% { background: var(--bg2); }
+      30% { background: rgba(74, 254, 138, 0.08); box-shadow: inset 0 0 30px rgba(74, 254, 138, 0.05); }
+      100% { background: var(--bg2); }
+    }
+    @keyframes mgrRejectFlash {
+      0% { background: var(--bg2); }
+      20% { background: rgba(255, 92, 92, 0.08); box-shadow: inset 0 0 30px rgba(255, 92, 92, 0.05); }
+      100% { background: var(--bg2); }
+    }
 
     /* Broadcast notification */
     .broadcast-bar {
@@ -1342,16 +861,192 @@
 
     .broadcast-bar .bc-icon { font-size: 14px; }
 
-    .cmd-review-btn {
-      margin: 16px 24px;
-      padding: 12px; width: calc(100% - 48px);
-      background: var(--green); color: #071409;
-      font-family: var(--sans); font-size: 13px; font-weight: 500;
-      border: none; border-radius: 8px; cursor: pointer;
-      transition: opacity .15s; flex-shrink: 0;
+    /* ── CONFLICT HIGHLIGHTING ── */
+    .bubble-conflict {
+      border-left: 3px solid #f59e0b !important;
+      background: rgba(245, 158, 11, .08) !important;
+      position: relative;
     }
-    .cmd-review-btn:hover { opacity: .88; }
-    .cmd-review-btn:disabled { opacity: .3; cursor: default; background: var(--bg3); color: var(--text4); }
+    .bubble-conflict .conflict-badge {
+      display: inline-block;
+      font-family: var(--mono); font-size: 7px; font-weight: 600;
+      color: #f59e0b; text-transform: uppercase; letter-spacing: .08em;
+      background: rgba(245, 158, 11, .15); border: 1px solid rgba(245, 158, 11, .3);
+      padding: 1px 5px; border-radius: 3px; margin-left: 8px;
+    }
+    .skill-applied-badge {
+      display: inline-block;
+      font-family: var(--mono); font-size: 7px; font-weight: 600;
+      color: #a78bfa; text-transform: uppercase; letter-spacing: .08em;
+      background: rgba(139, 92, 246, .15); border: 1px solid rgba(139, 92, 246, .3);
+      padding: 1px 5px; border-radius: 3px; margin-left: 6px;
+    }
+    .bubble-skill-applied {
+      border-left: 3px solid #a78bfa !important;
+      background: rgba(139, 92, 246, .06) !important;
+      vertical-align: middle;
+    }
+
+    /* ── TOOL CALL BUBBLE ── */
+    .tool-call-bubble {
+      max-width: 90%; align-self: center;
+      background: rgba(139, 92, 246, .08);
+      border: 1px dashed rgba(139, 92, 246, .4);
+      border-radius: 8px; padding: 8px 12px;
+      font-family: var(--mono); font-size: 10px;
+      color: #c4b5fd; line-height: 1.5;
+      animation: fadeSlideIn .3s ease both;
+      margin: 4px 0;
+    }
+    .tool-call-bubble .tc-header {
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 4px;
+    }
+    .tool-call-bubble .tc-icon { font-size: 12px; }
+    .tool-call-bubble .tc-name { color: #a78bfa; font-weight: 600; font-size: 10px; }
+    .tool-call-bubble .tc-type {
+      font-size: 7px; text-transform: uppercase; letter-spacing: .08em;
+      padding: 1px 5px; border-radius: 3px;
+      background: rgba(139, 92, 246, .2); color: #a78bfa;
+    }
+    .tool-call-bubble .tc-type.tc-new {
+      background: rgba(34, 197, 94, .2); color: #22c55e;
+    }
+    .tool-call-bubble .tc-input { color: var(--text3); }
+    .tool-call-bubble .tc-result {
+      color: var(--text4); margin-top: 4px; padding-top: 4px;
+      border-top: 1px solid rgba(139, 92, 246, .15);
+      font-style: italic;
+    }
+
+    .reasoning-card {
+      max-width: 85%; align-self: flex-start;
+      background: rgba(245, 158, 11, .06); border: 1px solid rgba(245, 158, 11, .2);
+      border-radius: 8px; padding: 8px 12px; margin-top: -4px;
+      font-size: 10px; color: var(--text2); line-height: 1.5;
+      animation: fadeSlideIn .3s ease both;
+      cursor: pointer;
+    }
+    .reasoning-card .reasoning-header {
+      font-family: var(--mono); font-size: 8px; color: #f59e0b;
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .reasoning-card .reasoning-body {
+      display: none; margin-top: 4px;
+    }
+    .reasoning-card.open .reasoning-body { display: block; }
+    .reasoning-card .reasoning-technique {
+      font-family: var(--mono); font-size: 9px; color: var(--green);
+      margin-top: 4px;
+    }
+
+    /* ── TEACHING MOMENT TOAST ── */
+    .teaching-toast {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: linear-gradient(90deg, rgba(139, 92, 246, .15), rgba(13, 32, 24, .95));
+      border-bottom: 1px solid rgba(139, 92, 246, .4);
+      padding: 12px 28px;
+      font-family: var(--mono); font-size: 11px; color: #c4b5fd;
+      display: flex; align-items: center; gap: 10px;
+      z-index: 101;
+      animation: broadcastSlide .4s ease both;
+    }
+    .teaching-toast .teach-icon {
+      font-size: 14px; color: #a78bfa;
+    }
+    .teaching-toast .teach-teacher { color: #a78bfa; font-weight: 600; }
+    .teaching-toast .teach-skill { color: var(--green); font-weight: 500; }
+    .teaching-toast .teach-recipients { color: var(--text3); }
+
+    /* ── KNOWLEDGE BASE PANEL ── */
+    .kb-panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .kb-panel-title {
+      font-family: var(--mono); font-size: 10px; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .08em;
+    }
+    .kb-clear-btn {
+      font-family: var(--mono); font-size: 9px; color: var(--text4);
+      background: var(--bg3); border: 1px solid var(--border);
+      padding: 2px 8px; border-radius: 4px; cursor: pointer;
+    }
+    .kb-clear-btn:hover { color: #ef4444; border-color: #ef4444; }
+    .kb-entry {
+      display: flex; gap: 10px; padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeSlideIn .3s ease both;
+    }
+    .kb-entry:last-child { border-bottom: none; }
+    .kb-entry-icon { color: #a78bfa; font-size: 12px; flex-shrink: 0; margin-top: 2px; }
+    .kb-entry-content { flex: 1; min-width: 0; }
+    .kb-entry-name { font-size: 11px; font-weight: 500; color: var(--text); }
+    .kb-entry-strategy { font-size: 10px; color: var(--text3); margin-top: 2px; line-height: 1.4; }
+    .kb-entry-meta { font-family: var(--mono); font-size: 8px; color: var(--text4); margin-top: 3px; }
+    .kb-empty { font-family: var(--mono); font-size: 10px; color: var(--text4); font-style: italic; }
+
+    /* ── LEARNING TIMELINE PANEL ── */
+    .timeline-panel-header {
+      font-family: var(--mono); font-size: 10px; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px;
+    }
+    .tl-event {
+      display: flex; gap: 12px; position: relative;
+      padding-bottom: 12px;
+      animation: fadeSlideIn .3s ease both;
+    }
+    .tl-event:not(:last-child)::before {
+      content: ''; position: absolute;
+      left: 9px; top: 20px; bottom: 0;
+      width: 1px; background: var(--border2);
+    }
+    .tl-dot {
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; flex-shrink: 0;
+    }
+    .tl-dot.conflict { background: rgba(239, 68, 68, .2); color: #ef4444; }
+    .tl-dot.reasoning { background: rgba(245, 158, 11, .2); color: #f59e0b; }
+    .tl-dot.resolution { background: rgba(34, 197, 94, .2); color: #22c55e; }
+    .tl-dot.skill_extracted { background: rgba(139, 92, 246, .2); color: #a78bfa; }
+    .tl-dot.skill_shared { background: rgba(59, 130, 246, .2); color: #3b82f6; }
+    .tl-dot.skill_rejected { background: rgba(239, 68, 68, .3); color: #ef4444; }
+    .tl-event.tl-rejected { background: rgba(239, 68, 68, .08); border: 1px solid rgba(239, 68, 68, .25); border-radius: 8px; padding: 8px 12px; margin-bottom: 4px; }
+    .tl-event.tl-rejected .tl-agent { color: #ef4444; }
+    .tl-event.tl-rejected .tl-detail { color: #fca5a5; }
+    .tl-content { flex: 1; min-width: 0; }
+    .tl-agent { font-family: var(--mono); font-size: 9px; color: var(--green); }
+    .tl-detail { font-size: 10px; color: var(--text2); margin-top: 2px; line-height: 1.4; }
+    .tl-time { font-family: var(--mono); font-size: 8px; color: var(--text4); margin-top: 2px; }
+    .tl-empty { font-family: var(--mono); font-size: 10px; color: var(--text4); font-style: italic; }
+
+    /* Tab navbar */
+    .cmd-tabs {
+      display: flex; gap: 0; border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .cmd-tab {
+      flex: 1; padding: 10px 12px;
+      font-family: var(--mono); font-size: 10px; color: var(--text4);
+      text-transform: uppercase; letter-spacing: .08em;
+      background: var(--bg2); border: none; border-right: 1px solid var(--border);
+      cursor: pointer; transition: color .15s, background .15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .cmd-tab:last-child { border-right: none; }
+    .cmd-tab:hover { color: var(--text2); }
+    .cmd-tab.active { color: var(--green); background: var(--bg3); box-shadow: inset 0 -2px 0 var(--green); }
+
+    /* Tab content panels */
+    .cmd-tab-content { display: none; flex: 1; overflow: hidden; min-height: 0; }
+    .cmd-tab-content.active { display: flex; flex-direction: column; }
+
+    .tab-panel-inner {
+      flex: 1; overflow-y: auto; padding: 16px 24px;
+    }
 
     /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 4px; }
@@ -1396,15 +1091,6 @@
           </div>
           <div class="dz-title" id="dz-title">Drop your CSV here or click to browse</div>
           <div class="dz-sub" id="dz-sub">name, title, company, email — one lead per row</div>
-        </div>
-
-        <div class="upload-config" id="upload-config">
-          <div class="config-label">Agent persona</div>
-          <div class="config-row">
-            <input class="config-input" id="rep-name"    type="text" placeholder="Your name (e.g. Alex Rivera)" />
-            <input class="config-input" id="company"     type="text" placeholder="Your company (e.g. Acme Corp)" />
-            <input class="config-input" id="product-desc" type="text" placeholder="What you sell (e.g. AI SDR tooling for B2B sales teams)" />
-          </div>
         </div>
 
         <button class="run-btn" id="run-btn" onclick="startPipeline()">
@@ -1459,125 +1145,10 @@
         <div class="progress-label" id="progress-label">0 / 0 complete</div>
       </div>
 
-      <button class="send-all-btn" id="send-all-btn" disabled onclick="goToReview()">
-        Review &amp; send all emails →
-      </button>
     </div>
   </div>
 
 
-  <!-- ══════════════════════════════════════
-       SCREEN 3 — EMAIL REVIEW
-  ══════════════════════════════════════ -->
-  <div id="screen-review" class="screen">
-    <div class="topbar">
-      <div class="topbar-left">
-        <div class="logo">AI Sales Team</div>
-        <div class="topbar-meta" id="review-meta">EMAIL REVIEW</div>
-      </div>
-      <div class="topbar-right">
-        <button class="view-seq-btn" id="view-seq-btn" onclick="goToSequence()">View sequences →</button>
-        <button class="view-seq-btn" onclick="goToAnalytics()">Analytics →</button>
-        <div class="demo-toggle" onclick="toggleDemoMode()">
-          <span class="demo-dot" id="demo-dot-3"></span>
-          <span class="demo-toggle-label">DEMO MODE</span>
-          <div class="demo-switch" id="demo-switch-3">
-            <div class="demo-switch-knob"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="review-layout">
-
-      <!-- Sidebar -->
-      <div class="lead-sidebar">
-        <div class="sidebar-header" id="sidebar-count">0 leads</div>
-        <div id="sidebar-list"></div>
-      </div>
-
-      <!-- Main panel -->
-      <div class="review-main">
-        <div class="review-topbar">
-          <div class="contact-row">
-            <div class="avatar" id="rv-avatar">--</div>
-            <div>
-              <div class="contact-name" id="rv-name">—</div>
-              <div class="contact-meta" id="rv-meta">—</div>
-            </div>
-          </div>
-          <div class="fit-display">
-            <div class="fit-num" id="rv-score">—</div>
-            <div class="fit-lbl">fit<br>score</div>
-          </div>
-        </div>
-
-        <div class="review-scroll">
-
-          <!-- Research -->
-          <div class="review-section">
-            <div class="section-lbl">Research summary</div>
-            <div class="research-grid" id="rv-research">
-              <div class="r-card"><div class="rc-lbl">Loading</div><div class="rc-val">—</div></div>
-            </div>
-          </div>
-
-          <!-- Email -->
-          <div class="review-section">
-            <div class="section-lbl">Generated email</div>
-            <div class="email-subject-row">
-              <span class="email-subj-lbl">Subject</span>
-              <span class="email-subj-val" id="rv-subject">—</span>
-              <input class="email-subj-edit" id="rv-subject-edit" style="display:none" />
-            </div>
-            <div class="email-body-wrap" id="rv-body">
-              <button class="copy-btn" onclick="copyEmail()">copy</button>
-              <span id="rv-body-text">—</span>
-              <textarea class="email-body-edit" id="rv-body-edit" style="display:none"></textarea>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="review-actions">
-          <button class="ra-btn ra-send" id="rv-send-btn" onclick="markSent()">Send email</button>
-          <button class="ra-btn ra-edit" id="rv-edit-btn" onclick="toggleEditMode()">Edit draft</button>
-          <button class="ra-btn ra-send-all" id="rv-send-all-btn" onclick="sendAllEmails()" style="display:none">Send all</button>
-          <button class="ra-btn ra-skip" onclick="skipLead()">Skip lead</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-
-  <!-- ══════════════════════════════════════
-       SCREEN 4 — SEQUENCE VIEW
-  ══════════════════════════════════════ -->
-  <div id="screen-sequence" class="screen">
-    <div class="topbar">
-      <div class="topbar-left">
-        <div class="logo">AI Sales Team</div>
-        <a class="topbar-back" onclick="showScreen('screen-review')">← back to review</a>
-      </div>
-      <div class="topbar-right">
-        <div class="topbar-meta">SEQUENCES</div>
-        <div class="demo-toggle" onclick="toggleDemoMode()">
-          <span class="demo-dot" id="demo-dot-4"></span>
-          <span class="demo-toggle-label">DEMO MODE</span>
-          <div class="demo-switch" id="demo-switch-4">
-            <div class="demo-switch-knob"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="seq-body">
-      <p class="seq-title">Follow-up sequences</p>
-      <p class="seq-sub">Automated follow-ups scheduled for sent emails</p>
-      <div id="seq-cards"></div>
-    </div>
-  </div>
 
 
   <!-- ══════════════════════════════════════
@@ -1587,7 +1158,7 @@
     <div class="topbar">
       <div class="topbar-left">
         <div class="logo">AI Sales Team</div>
-        <a class="topbar-back" onclick="showScreen('screen-review')">← back to review</a>
+        <a class="topbar-back" onclick="showScreen('screen-command')">← back to command center</a>
       </div>
       <div class="topbar-right">
         <div class="topbar-meta">ANALYTICS</div>
@@ -1596,7 +1167,7 @@
 
     <div class="analytics-body">
       <p class="analytics-title">Outreach analytics</p>
-      <p class="analytics-sub">Real-time overview of your email campaign</p>
+      <p class="analytics-sub">Real-time overview of your outreach campaign</p>
 
       <div class="stats-row" id="analytics-stats"></div>
 
@@ -1614,7 +1185,6 @@
               <th>Company</th>
               <th>Fit</th>
               <th>Status</th>
-              <th>Subject</th>
             </tr>
           </thead>
           <tbody id="analytics-tbody"></tbody>
@@ -1645,9 +1215,9 @@
     <div class="cmd-body">
       <!-- Manager strip -->
       <div class="manager-strip">
-        <div class="manager-avatar thinking" id="mgr-avatar">SM</div>
+        <div class="manager-avatar thinking" id="mgr-avatar"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0112 0v1"/></svg></div>
         <div class="manager-info">
-          <div class="manager-name" id="mgr-name">Sales Manager</div>
+          <div class="manager-name" id="mgr-name">Johnny</div>
           <div class="manager-role">AI SALES MANAGER</div>
           <div class="manager-strategy" id="mgr-strategy">Analyzing your leads...</div>
         </div>
@@ -1667,12 +1237,7 @@
         </div>
       </div>
 
-      <!-- Main area: agent cards with embedded conversations -->
-      <div class="cmd-main">
-        <div class="employee-grid" id="employee-grid"></div>
-      </div>
-
-      <!-- Skills bar — compact bottom strip -->
+      <!-- Skills bar — compact strip -->
       <div class="skills-bar">
         <div class="skills-bar-label">Team Skills <span id="skills-count">(0)</span></div>
         <div class="skills-bar-items" id="skills-list">
@@ -1680,12 +1245,49 @@
         </div>
       </div>
 
-      <!-- Activity feed -->
-      <div class="activity-feed" id="activity-feed"></div>
+      <!-- Tab navbar -->
+      <div class="cmd-tabs">
+        <button class="cmd-tab active" id="tab-team" onclick="switchTab('team')">Sales Team</button>
+        <button class="cmd-tab" id="tab-kb" onclick="switchTab('kb')">Skill Tree <span id="kb-count">(0)</span></button>
+        <button class="cmd-tab" id="tab-timeline" onclick="switchTab('timeline')">Learning History <span id="tl-count">(0)</span></button>
+        <button class="cmd-tab" id="tab-feed" onclick="switchTab('feed')">Activity Feed</button>
+      </div>
 
-      <button class="cmd-review-btn" id="cmd-review-btn" disabled onclick="goToReview()" style="margin:0 24px 16px;">
-        Review all emails &rarr;
-      </button>
+      <!-- Tab: Sales Team -->
+      <div class="cmd-tab-content active" id="content-team">
+        <div class="cmd-main">
+          <div class="employee-grid" id="employee-grid"></div>
+        </div>
+      </div>
+
+      <!-- Tab: Skill Tree -->
+      <div class="cmd-tab-content" id="content-kb">
+        <div class="tab-panel-inner">
+          <div class="kb-panel-header">
+            <div class="kb-panel-title">Accumulated Knowledge</div>
+            <button class="kb-clear-btn" onclick="clearKnowledgeBase()">Clear</button>
+          </div>
+          <div id="kb-list">
+            <div class="kb-empty" id="kb-empty">No skills yet — run a batch to start learning...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Learning History -->
+      <div class="cmd-tab-content" id="content-timeline">
+        <div class="tab-panel-inner">
+          <div id="tl-list">
+            <div class="tl-empty" id="tl-empty">Timeline will populate as agents encounter and resolve conflicts...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Activity Feed -->
+      <div class="cmd-tab-content" id="content-feed">
+        <div class="tab-panel-inner">
+          <div id="activity-feed"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1699,15 +1301,11 @@
     let activeLeadIdx = 0;
     let leadCount = 0;
     let demoMode = false;
-    let sentLeads = new Set();
     let skippedLeads = new Set();
-    let editMode = false;
-    let smtpConfigured = false;
 
     const PIPELINE_STAGES = [
       'researching company_',
       'finding pain points_',
-      'drafting email_',
       'scoring fit_',
     ];
 
@@ -1724,10 +1322,6 @@
           painTags: ['SDR ramp time', 'outbound efficiency', 'pipeline generation', 'rep onboarding'],
           whyFit: 'Doubling their sales team means dozens of new SDRs who need to ramp fast — AI-powered outreach tooling directly addresses their scaling bottleneck.',
         },
-        email: {
-          subject: 'Lattice is doubling sales headcount — how to ramp reps 3x faster',
-          body: 'Hi Sarah,\n\nCongrats on the Series F and the plan to double your sales org. That\'s an exciting but brutal scaling challenge — every new SDR takes 3-4 months to hit quota.\n\nWe help teams like yours cut that ramp time by automating the research and personalization layer. Your reps focus on conversations instead of LinkedIn tabs.\n\nWould love to show you a live run on your actual lead list. 15 minutes this week?\n\n— Alex Rivera\nAcme Corp',
-        },
       },
       'Rippling': {
         fitScore: 8,
@@ -1737,10 +1331,6 @@
           signal: 'Rippling closed a $200M round at a $13.5B valuation and opened a new sales hub in Austin, adding 150+ GTM roles.',
           painTags: ['sales tech consolidation', 'outbound scaling', 'pipeline velocity'],
           whyFit: 'With 150+ new GTM hires, Rippling needs tooling that gets reps productive from day one without bloating the tech stack.',
-        },
-        email: {
-          subject: 'Scaling 150 GTM hires in Austin — one less tool to worry about',
-          body: 'Hi Marcus,\n\nSaw Rippling is spinning up a major GTM hub in Austin — 150+ roles is a serious investment in outbound.\n\nThe hardest part isn\'t hiring, it\'s getting reps writing quality outreach from week one. We automate the entire research-to-email pipeline so new hires produce senior-level personalization immediately.\n\nWorth a 15-minute look at how it works on your ICP?\n\n— Alex Rivera\nAcme Corp',
         },
       },
       'Loom Inc': {
@@ -1752,10 +1342,6 @@
           painTags: ['PLG to sales-led transition', 'outbound pipeline', 'enterprise expansion'],
           whyFit: 'Loom\'s shift from pure PLG to outbound sales means they\'re building an SDR function from scratch — the ideal moment for AI-powered outreach tooling.',
         },
-        email: {
-          subject: 'Loom\'s enterprise push — building outbound without the overhead',
-          body: 'Hi Priya,\n\nLoom\'s move into enterprise sales-led is a big shift — building an outbound motion from scratch is one of the hardest GTM challenges.\n\nRather than hiring a full SDR team upfront, our AI handles the research and personalization layer so your first reps punch way above their weight.\n\nHappy to show you how it works on your target accounts. 15 minutes?\n\n— Alex Rivera\nAcme Corp',
-        },
       },
       'Deel Global': {
         fitScore: 9,
@@ -1765,10 +1351,6 @@
           signal: 'Deel acquired Assemble and expanded into compensation benchmarking, while opening new sales offices in Dubai and Singapore.',
           painTags: ['global outbound scaling', 'multi-market personalization', 'pipeline generation', 'rep efficiency'],
           whyFit: 'Expanding outbound across Dubai and Singapore markets requires localized, research-heavy personalization at scale — exactly the pain AI SDR tooling solves.',
-        },
-        email: {
-          subject: 'Scaling Deel\'s outbound across Dubai and Singapore',
-          body: 'Hi James,\n\nDeel opening sales in Dubai and Singapore is a bold move — outbound in new markets requires deep localized research that eats SDR bandwidth alive.\n\nWe automate that entire research layer so your reps in each region send hyper-relevant emails from day one, no market expertise required.\n\nWorth 15 minutes to see a live demo on your target accounts?\n\n— Alex Rivera\nAcme Corp',
         },
       },
       'Notion HQ': {
@@ -1780,24 +1362,12 @@
           painTags: ['enterprise sales scaling', 'outbound efficiency', 'sales process optimization'],
           whyFit: 'With 40+ new AEs and a nascent outbound motion, Notion\'s sales ops team needs tooling that drives consistent, high-quality outreach without manual process overhead.',
         },
-        email: {
-          subject: '40 new AEs at Notion — keeping outreach quality high at scale',
-          body: 'Hi Elena,\n\nNotion\'s enterprise push is exciting — 3x growth in enterprise contracts means your 40 new AEs need to produce quality outreach from the jump.\n\nWe help sales ops teams like yours standardize personalization at scale. Every email is researched and tailored automatically, so quality doesn\'t drop as the team grows.\n\nCan I show you a quick demo? 15 minutes.\n\n— Alex Rivera\nAcme Corp',
-        },
       },
     };
 
     function getDemoResult(lead, repName, company) {
       if (DEMO_RESULTS[lead.company]) {
-        const r = JSON.parse(JSON.stringify(DEMO_RESULTS[lead.company]));
-        // Replace rep name and company in email body if user customized them
-        if (repName && repName !== 'Alex Rivera') {
-          r.email.body = r.email.body.replace('Alex Rivera', repName);
-        }
-        if (company && company !== 'Acme Corp') {
-          r.email.body = r.email.body.replace('Acme Corp', company);
-        }
-        return r;
+        return JSON.parse(JSON.stringify(DEMO_RESULTS[lead.company]));
       }
       // Fallback for unknown companies
       return mockResult(lead, repName, company);
@@ -1824,12 +1394,6 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
-
-    // Check if SMTP is configured on load
-    fetch('http://localhost:8000/email-config')
-      .then(r => r.json())
-      .then(data => { smtpConfigured = data.configured; })
-      .catch(() => { smtpConfigured = false; });
 
     /* ────────────────────────────────────────
        SCREEN 1 — FILE HANDLING
@@ -1866,7 +1430,7 @@
         document.getElementById('dz-title').textContent = `${file.name} · ${leadCount} leads loaded`;
         document.getElementById('dz-sub').textContent = `Ready to run`;
 
-        document.getElementById('upload-config').classList.add('visible');
+        // config section removed
 
         const btn = document.getElementById('run-btn');
         btn.classList.add('visible');
@@ -1901,14 +1465,13 @@
     function startPipeline() {
       if (!leads.length) return;
       showScreen('screen-command');
-      sentLeads = new Set();
       employeeMap = {};
       learnedSkills = [];
       completedLeads = 0;
 
-      const repName    = document.getElementById('rep-name').value    || 'Your Rep';
-      const company    = document.getElementById('company').value     || 'Your Company';
-      const productDesc = document.getElementById('product-desc').value || 'AI-powered sales tooling';
+      const repName    = 'Alex Rivera';
+      const company    = 'Acme Corp';
+      const productDesc = 'AI-powered sales tooling';
 
       results = leads.map(() => null);
       document.getElementById('mgr-lead-count').textContent = leads.length;
@@ -1919,7 +1482,15 @@
       document.getElementById('skills-count').textContent = '(0)';
       document.getElementById('mgr-emp-count').textContent = '0';
       document.getElementById('mgr-skill-count').textContent = '0';
-      document.getElementById('cmd-review-btn').disabled = true;
+      tlCount = 0;
+      document.getElementById('tl-count').textContent = '(0)';
+      document.getElementById('tl-list').innerHTML = '<div class="tl-empty" id="tl-empty">Timeline will populate as agents encounter conflicts...</div>';
+      fetch(BASE_URL + '/knowledge-base').then(function(r){return r.json();}).then(function(d){
+        if (d.skills && d.skills.length) {
+          kbCount = 0; document.getElementById('kb-list').innerHTML = '';
+          d.skills.forEach(function(s){ addKBEntry(s, s.source_agent || 'Previous batch'); });
+        }
+      }).catch(function(){});
 
       if (demoMode) {
         runDemoBatch(repName, company, productDesc);
@@ -2005,11 +1576,28 @@
       }
       const lead = leads[leadIdx];
       const clientName = lead?.name?.split(' ')[0] || 'Client';
-      panel.innerHTML = msgs.map(m => {
-        const isSdr = m.role === 'sdr';
-        return `<div class="chat-bubble ${isSdr ? 'bubble-sdr' : 'bubble-client'}">
-          <div class="bubble-label">${isSdr ? emp.name : clientName}</div>${m.text}
-        </div>`;
+      panel.innerHTML = msgs.map(function(m) {
+        // Tool call messages
+        if (m.role === 'tool_call') {
+          var isUse = m.tool === 'use_skill';
+          var inp = m.input || {};
+          var typeLabel = isUse ? '<span class="tc-type">Skill Applied</span>' : '<span class="tc-type tc-new">New Skill</span>';
+          var inputText = isUse
+            ? '<b>' + (inp.skill_name || '') + '</b> — ' + (inp.reasoning || '')
+            : '<b>' + (inp.skill_name || '') + '</b> — ' + (inp.strategy || '');
+          return '<div class="tool-call-bubble"><div class="tc-header"><span class="tc-icon">&#128295;</span><span class="tc-name">' + m.tool + '()</span>' + typeLabel + '</div><div class="tc-input">' + inputText + '</div><div class="tc-result">' + (m.result || '') + '</div></div>';
+        }
+        // Regular chat messages
+        var isSdr = m.role === 'sdr';
+        var conflictCls = m.is_conflict ? (m.skill_applied ? ' bubble-skill-applied' : ' bubble-conflict') : '';
+        var badge = '';
+        if (m.skill_applied && isSdr) { badge = '<span class="skill-applied-badge">Skill Applied: ' + m.skill_applied + '</span>'; }
+        else if (m.is_conflict) { badge = '<span class="conflict-badge">' + (isSdr ? 'Response' : 'Objection') + '</span>'; }
+        var html = '<div class="chat-bubble ' + (isSdr ? 'bubble-sdr' : 'bubble-client') + conflictCls + '"><div class="bubble-label">' + (isSdr ? emp.name : clientName) + badge + '</div>' + m.text + '</div>';
+        if (m.is_conflict && isSdr && m.sdr_reasoning) {
+          html += '<div class="reasoning-card" onclick="this.classList.toggle(\'open\')"><div class="reasoning-header">&#129504; AI Reasoning (click to expand)</div><div class="reasoning-body">' + m.sdr_reasoning + (m.conflict_id ? '<div class="reasoning-technique">Technique: ' + m.conflict_id + '</div>' : '') + '</div></div>';
+        }
+        return html;
       }).join('');
       panel.scrollTop = panel.scrollHeight;
     }
@@ -2062,9 +1650,20 @@
         const clientName = lead?.name?.split(' ')[0] || 'Client';
         const isSdr = msg.role === 'sdr';
         const div = document.createElement('div');
-        div.className = `chat-bubble ${isSdr ? 'bubble-sdr' : 'bubble-client'}`;
-        div.innerHTML = `<div class="bubble-label">${isSdr ? emp.name : clientName}</div>${msg.text}`;
+        div.className = 'chat-bubble ' + (isSdr ? 'bubble-sdr' : 'bubble-client') + (msg.is_conflict ? (msg.skill_applied ? ' bubble-skill-applied' : ' bubble-conflict') : '');
+        var conflictBadge = '';
+        if (msg.skill_applied && isSdr) { conflictBadge = '<span class="skill-applied-badge">Skill Applied: ' + msg.skill_applied + '</span>'; }
+        else if (msg.is_conflict) { conflictBadge = '<span class="conflict-badge">' + (isSdr ? 'Response' : 'Objection') + '</span>'; }
+        div.innerHTML = '<div class="bubble-label">' + (isSdr ? emp.name : clientName) + conflictBadge + '</div>' + msg.text;
         panel.appendChild(div);
+        // Add reasoning card for SDR conflict responses
+        if (msg.is_conflict && isSdr && msg.sdr_reasoning) {
+          var rc = document.createElement('div');
+          rc.className = 'reasoning-card';
+          rc.onclick = function() { rc.classList.toggle('open'); };
+          rc.innerHTML = '<div class="reasoning-header">&#129504; AI Reasoning (click to expand)</div><div class="reasoning-body">' + msg.sdr_reasoning + (msg.conflict_id ? '<div class="reasoning-technique">Technique: ' + msg.conflict_id + '</div>' : '') + '</div>';
+          panel.appendChild(rc);
+        }
         panel.scrollTop = panel.scrollHeight;
       }
     }
@@ -2080,7 +1679,7 @@
         &#9889; ${skill.skill_name}
         <div class="skill-tooltip">
           ${skill.strategy}
-          <div class="skill-tooltip-source">Learned by ${empName}</div>
+          <div class="skill-tooltip-source">${empName === 'Johnny' ? 'Approved' : 'Learned'} by ${empName}</div>
         </div>
       `;
       list.appendChild(chip);
@@ -2090,6 +1689,7 @@
     }
 
     function showBroadcast(message) {
+      return; // disabled
       const bar = document.createElement('div');
       bar.className = 'broadcast-bar';
       bar.innerHTML = `<span class="bc-icon">&#9889;</span> ${message}`;
@@ -2102,12 +1702,122 @@
       setTimeout(() => bar.remove(), 3500);
     }
 
+    /* ── PANEL TOGGLES ── */
+    function switchTab(tab) {
+      const tabs = ['team', 'kb', 'timeline', 'feed'];
+      tabs.forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+        document.getElementById('content-' + t).classList.toggle('active', t === tab);
+      });
+    }
+
+    /* ── KNOWLEDGE BASE ── */
+    let kbCount = 0;
+    function addKBEntry(skill, agentName) {
+      const list = document.getElementById('kb-list');
+      const empty = document.getElementById('kb-empty');
+      if (empty) empty.remove();
+      const div = document.createElement('div');
+      div.className = 'kb-entry';
+      const now = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      div.innerHTML = '<div class="kb-entry-icon">&#9889;</div><div class="kb-entry-content"><div class="kb-entry-name">' + (skill.skill_name||'') + '</div><div class="kb-entry-strategy">' + (skill.strategy||'') + '</div><div class="kb-entry-meta">Learned by ' + agentName + ' &middot; ' + now + '</div></div>';
+      list.appendChild(div);
+      kbCount++;
+      document.getElementById('kb-count').textContent = '(' + kbCount + ')';
+    }
+
+    async function clearKnowledgeBase() {
+      try { await fetch(BASE_URL + '/knowledge-base', {method:'DELETE'}); } catch(e) {}
+      document.getElementById('kb-list').innerHTML = '<div class="kb-empty" id="kb-empty">Knowledge cleared.</div>';
+      kbCount = 0;
+      document.getElementById('kb-count').textContent = '(0)';
+    }
+
+    /* ── LEARNING TIMELINE ── */
+    let tlCount = 0;
+    const TL_ICONS = {
+      conflict_detected: {cls: 'conflict', icon: '!'},
+      reasoning: {cls: 'reasoning', icon: '?'},
+      resolution: {cls: 'resolution', icon: '&#10003;'},
+      skill_extracted: {cls: 'skill_extracted', icon: '&#9889;'},
+      skill_shared: {cls: 'skill_shared', icon: '&#8594;'},
+      skill_applied: {cls: 'skill_extracted', icon: '&#10004;'},
+      skill_rejected: {cls: 'skill_rejected', icon: '&#10007;'},
+    };
+    function addTimelineEvent(evt) {
+      const list = document.getElementById('tl-list');
+      const empty = document.getElementById('tl-empty');
+      if (empty) empty.remove();
+      const info = TL_ICONS[evt.event_type] || {cls: 'resolution', icon: '?'};
+      const now = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const div = document.createElement('div');
+      div.className = 'tl-event' + (evt.event_type === 'skill_rejected' ? ' tl-rejected' : '');
+      const sharedHtml = (evt.shared_with && evt.shared_with.length) ? '<div class="tl-detail" style="color:#3b82f6;">Shared with: ' + evt.shared_with.join(', ') + '</div>' : '';
+      div.innerHTML = '<div class="tl-dot ' + info.cls + '">' + info.icon + '</div><div class="tl-content"><div class="tl-agent">' + (evt.agent_name||'') + (evt.lead_name ? ' &rarr; ' + evt.lead_name : '') + '</div><div class="tl-detail">' + (evt.detail||'') + '</div>' + sharedHtml + '<div class="tl-time">' + now + '</div></div>';
+      list.appendChild(div);
+      list.scrollTop = list.scrollHeight;
+      tlCount++;
+      document.getElementById('tl-count').textContent = '(' + tlCount + ')';
+    }
+
+    /* ── TEACHING MOMENT TOAST ── */
+    function showTeachingMoment(data) {
+      return; // disabled — was the banner at the top of the screen
+      const toast = document.createElement('div');
+      toast.className = 'teaching-toast';
+      const recipientNames = (data.recipients || []).map(function(r){return r.name;}).join(', ');
+      toast.innerHTML = '<span class="teach-icon">&#127891;</span><span><span class="teach-teacher">' + data.teacherName + '</span> taught <span class="teach-skill">"' + (data.skill && data.skill.skill_name || '') + '"</span> to <span class="teach-recipients">' + (recipientNames || 'the team') + '</span></span>';
+      document.body.appendChild(toast);
+      if (data.teacherId === 'manager') {
+        var mgrAv = document.getElementById('mgr-avatar');
+        if (mgrAv) { mgrAv.classList.add('thinking'); setTimeout(function(){ mgrAv.classList.remove('thinking'); }, 1500); }
+      } else {
+        var teacherCard = document.getElementById('emp-card-' + data.teacherId);
+        if (teacherCard) {
+          teacherCard.classList.add('skill-flash');
+          setTimeout(function(){ teacherCard.classList.remove('skill-flash'); }, 600);
+        }
+      }
+      setTimeout(function(){ toast.remove(); }, 4000);
+    }
+
+    /* ── TOOL CALL BUBBLE ── */
+    function addToolCallBubble(data) {
+      var empId = data.employeeId;
+      var leadIdx = data.leadIdx;
+      var emp = employeeMap[empId];
+      if (!emp) return;
+      var isUseSkill = data.tool === 'use_skill';
+      var toolInput = data.input || {};
+      // Store in conversation messages so renderEmpConv can replay them
+      if (!emp._convMessages[leadIdx]) emp._convMessages[leadIdx] = [];
+      emp._convMessages[leadIdx].push({
+        role: 'tool_call',
+        tool: data.tool,
+        input: toolInput,
+        result: data.result || ''
+      });
+      // Only render if currently visible
+      if (activeConvKey[empId] === leadIdx) {
+        var panel = document.getElementById('emp-conv-' + empId);
+        if (!panel) return;
+        var div = document.createElement('div');
+        div.className = 'tool-call-bubble';
+        var typeLabel = isUseSkill ? '<span class="tc-type">Skill Applied</span>' : '<span class="tc-type tc-new">New Skill</span>';
+        var inputText = isUseSkill
+          ? '<b>' + (toolInput.skill_name || '') + '</b> — ' + (toolInput.reasoning || '')
+          : '<b>' + (toolInput.skill_name || '') + '</b> — ' + (toolInput.strategy || '');
+        div.innerHTML = '<div class="tc-header"><span class="tc-icon">&#128295;</span><span class="tc-name">' + data.tool + '()</span>' + typeLabel + '</div><div class="tc-input">' + inputText + '</div><div class="tc-result">' + (data.result || '') + '</div>';
+        panel.appendChild(div);
+        panel.scrollTop = panel.scrollHeight;
+      }
+    }
+
     function markLeadComplete(leadIdx) {
       completedLeads++;
       const pct = Math.round((completedLeads / leads.length) * 100);
       if (completedLeads === leads.length) {
-        document.getElementById('cmd-review-btn').disabled = false;
-        document.getElementById('mgr-strategy').textContent = `All ${leads.length} leads processed. ${learnedSkills.length} skills learned. Ready for review.`;
+        document.getElementById('mgr-strategy').textContent = `All ${leads.length} leads processed. ${learnedSkills.length} skills learned.`;
         document.getElementById('mgr-avatar').classList.remove('thinking');
         addFeedItem(`All leads complete — ${learnedSkills.length} skills learned`, 'feed-green');
       }
@@ -2155,11 +1865,7 @@
       } catch (err) {
         console.error('Batch SSE failed:', err);
         addFeedItem('Connection error — falling back to demo mode', 'feed-amber');
-        runDemoBatch(
-          document.getElementById('rep-name').value || 'Your Rep',
-          document.getElementById('company').value || 'Your Company',
-          document.getElementById('product-desc').value || 'AI-powered sales tooling'
-        );
+        runDemoBatch('Alex Rivera', 'Acme Corp', 'AI-powered sales tooling');
       }
     }
 
@@ -2190,12 +1896,65 @@
           break;
 
         case 'skill_learned':
-          addSkillToPanel(data.skill, employeeMap[data.employeeId]?.name || data.employeeId);
-          addFeedItem(`New skill learned: ${data.skill.skill_name}`, 'feed-green');
+          addFeedItem(`${employeeMap[data.employeeId]?.name || data.employeeId} discovered: ${data.skill.skill_name}`, 'feed-amber');
           break;
 
+        case 'manager_reviewing_skill': {
+          const mgrAvatar = document.getElementById('mgr-avatar');
+          if (mgrAvatar) mgrAvatar.classList.add('thinking');
+          document.getElementById('mgr-strategy').textContent = `Reviewing new technique from ${data.employeeName}...`;
+          addFeedItem(`Johnny is reviewing "${data.skill.skill_name}" from ${data.employeeName}...`, 'feed-amber');
+          break;
+        }
+
+        case 'manager_approved_skill': {
+          const mgrAvatar2 = document.getElementById('mgr-avatar');
+          if (mgrAvatar2) mgrAvatar2.classList.remove('thinking');
+          const mgrStrip = document.querySelector('.manager-strip');
+          if (mgrStrip) { mgrStrip.classList.add('mgr-approved'); setTimeout(() => mgrStrip.classList.remove('mgr-approved'), 1500); }
+          document.getElementById('mgr-strategy').textContent = data.approvalMessage;
+          addSkillToPanel(data.skill, 'Johnny');
+          addKBEntry(data.skill, data.employeeName);
+          addFeedItem(`Johnny approved "${data.skill.skill_name}" — ${data.approvalMessage}`, 'feed-green');
+          break;
+        }
+
+        case 'manager_rejected_skill': {
+          const mgrAvatar3 = document.getElementById('mgr-avatar');
+          if (mgrAvatar3) mgrAvatar3.classList.remove('thinking');
+          const mgrStrip2 = document.querySelector('.manager-strip');
+          if (mgrStrip2) { mgrStrip2.classList.add('mgr-rejected'); setTimeout(() => mgrStrip2.classList.remove('mgr-rejected'), 2000); }
+          document.getElementById('mgr-strategy').textContent = `Rejected: ${data.reason}`;
+          addFeedItem(`Johnny rejected "${data.skill.skill_name}" from ${data.employeeName} — ${data.reason}`, 'feed-red');
+          // Track rejected skill so it doesn't get re-discovered by another employee
+          learnedSkills.push(data.skill);
+          break;
+        }
+
         case 'manager_broadcast':
-          showBroadcast(data.message);
+          break;
+
+        case 'tool_call':
+          addToolCallBubble(data);
+          var tcName = data.tool === 'use_skill' ? 'Applied skill: ' + (data.input?.skill_name || '') : 'New skill: ' + (data.input?.skill_name || '');
+          addFeedItem(tcName, data.tool === 'use_skill' ? 'feed-amber' : 'feed-green');
+          break;
+
+        case 'conflict_detected':
+          addFeedItem(`Conflict: ${data.conflict?.conflict_type || 'objection'} raised in conversation with ${leads[data.leadIdx]?.name || '?'}`, 'feed-amber');
+          break;
+
+        case 'conflict_reasoning':
+          addFeedItem(`AI reasoning: ${data.technique || 'analyzing'}`, 'feed-amber');
+          break;
+
+        case 'teaching_moment':
+          showTeachingMoment(data);
+          addFeedItem(`Johnny is teaching "${data.skill?.skill_name}" to the team`, 'feed-green');
+          break;
+
+        case 'timeline_event':
+          addTimelineEvent(data.event);
           break;
 
         case 'lead_complete':
@@ -2238,8 +1997,8 @@
           {role: "sdr", text: "Hi Sarah, saw Lattice just closed the Series F — congrats. Doubling the sales org is a massive undertaking. Curious how you're thinking about ramping all those new SDRs."},
           {role: "client", text: "Thanks! Yeah it's exciting but honestly a bit overwhelming. We're still figuring out the ramp plan."},
           {role: "sdr", text: "Totally get it. Most teams at your stage tell us their new reps spend 60-70% of their time just researching accounts before sending a single email. What if you could cut that to near zero?"},
-          {role: "client", text: "That sounds great in theory but we've looked at tools before and they always require a ton of setup and the output quality isn't there."},
-          {role: "sdr", text: "Fair concern. What if I ran it live on 5 of your actual target accounts right now — no setup, just your ICP? You'd see the research quality and email output in real-time. Takes 10 minutes."},
+          {role: "client", text: "That sounds great in theory but we've looked at tools before and they always require a ton of setup and the output quality isn't there.", is_conflict: true, conflict_id: "Zero-Setup Live Proof"},
+          {role: "sdr", text: "Fair concern. What if I ran it live on 5 of your actual target accounts right now — no setup, just your ICP? You'd see the research quality and email output in real-time. Takes 10 minutes.", is_conflict: true, conflict_id: "Zero-Setup Live Proof", sdr_reasoning: "The prospect has been burned by tools before — generic rebuttals won't work. By offering a zero-commitment live demo on THEIR accounts, I eliminate the setup objection and let quality speak for itself."},
           {role: "client", text: "Okay that's actually pretty compelling. Let's do Thursday at 2pm?"},
         ],
         outcome: "meeting_booked",
@@ -2248,13 +2007,12 @@
           strategy: "Offer a live demo on their actual accounts with zero setup to prove quality firsthand",
           skill_name: "Zero-Setup Live Proof"
         }],
-        email: {subject: "Thursday at 2pm — live demo on your accounts", body: "Hi Sarah,\n\nGreat chatting. As discussed, I'll run our AI on 5 of your actual target accounts live so you can see the research and email quality firsthand.\n\nThursday at 2pm works. I'll send a calendar invite.\n\n— Alex Rivera\nAcme Corp"},
       },
       1: { // Rippling
         messages: [
           {role: "sdr", text: "Hi Marcus, noticed Rippling is opening the Austin GTM hub — 150+ roles is a serious outbound investment. How are you thinking about the tech stack for those new reps?"},
-          {role: "client", text: "We're still evaluating. Honestly our main concern is adding yet another tool to the stack. We already have 6 sales tools."},
-          {role: "sdr", text: "Makes total sense — tool sprawl is real. What if this actually replaced 2-3 of those tools? We handle research, personalization, and sequencing in one layer. Net reduction in your stack."},
+          {role: "client", text: "We're still evaluating. Honestly our main concern is adding yet another tool to the stack. We already have 6 sales tools.", is_conflict: true, conflict_id: "Stack Consolidation Reframe"},
+          {role: "sdr", text: "Makes total sense — tool sprawl is real. What if this actually replaced 2-3 of those tools? We handle research, personalization, and sequencing in one layer. Net reduction in your stack.", is_conflict: true, conflict_id: "Stack Consolidation Reframe", sdr_reasoning: "The prospect's pain isn't about our tool specifically — it's about tool fatigue. Instead of defending adding another tool, I reframe as REMOVING tools. Net reduction is more compelling than net addition."},
           {role: "client", text: "Hmm that's interesting. But I'd need to see hard numbers on how it compares to what we have."},
           {role: "sdr", text: "Absolutely. I can put together a side-by-side comparison specific to your current stack. Would 15 minutes next week work to walk through it?"},
           {role: "client", text: "Sure, send me some times for Tuesday or Wednesday."},
@@ -2265,15 +2023,14 @@
           strategy: "Reframe the tool as a consolidator that replaces 2-3 existing tools, reducing stack complexity",
           skill_name: "Stack Consolidation Reframe"
         }],
-        email: {subject: "Side-by-side comparison for Rippling's sales stack", body: "Hi Marcus,\n\nThanks for the chat. I'll put together a comparison showing how we'd replace 2-3 tools in your current stack rather than adding to it.\n\nDoes Tuesday at 10am or Wednesday at 2pm work?\n\n— Alex Rivera\nAcme Corp"},
       },
       2: { // Loom
         messages: [
           {role: "sdr", text: "Hi Priya, exciting to see Loom going enterprise — the shift from PLG to outbound is one of the toughest GTM pivots. How's the SDR buildout going?"},
           {role: "client", text: "It's early days. We're still not sure if we even need a full SDR team or if we should stay product-led."},
           {role: "sdr", text: "That's the exact right question. What we've seen with other PLG-to-enterprise companies is that you don't need a huge team — you need 2-3 reps who can punch way above their weight with AI handling the research layer."},
-          {role: "client", text: "Interesting. But our budget is really tight since this is an experiment for us."},
-          {role: "sdr", text: "Totally understand. Our teams in similar spots typically see ROI within the first month — one booked meeting usually covers the cost. Want me to show you the math specific to Loom's deal sizes? Takes 15 minutes."},
+          {role: "client", text: "Interesting. But our budget is really tight since this is an experiment for us.", is_conflict: true, conflict_id: "Quick ROI Math"},
+          {role: "sdr", text: "Totally understand. Our teams in similar spots typically see ROI within the first month — one booked meeting usually covers the cost. Want me to show you the math specific to Loom's deal sizes? Takes 15 minutes.", is_conflict: true, conflict_id: "Quick ROI Math", sdr_reasoning: "Budget objections from experimental teams need concrete math, not vague promises. By anchoring to 'one meeting covers the cost,' I make the risk feel negligible and frame it as a small experiment — matching their own language."},
           {role: "client", text: "Yeah that would be helpful. Let's do next week."},
         ],
         outcome: "meeting_booked",
@@ -2282,13 +2039,12 @@
           strategy: "Show that one booked meeting covers the cost — frame as low-risk experiment with fast ROI math",
           skill_name: "Quick ROI Math"
         }],
-        email: {subject: "ROI math for Loom's outbound experiment", body: "Hi Priya,\n\nGood chat! I'll pull together ROI numbers specific to Loom's deal sizes so you can see how quickly one booked meeting covers the investment.\n\nI'll send some times for next week.\n\n— Alex Rivera\nAcme Corp"},
       },
       3: { // Deel
         messages: [
           {role: "sdr", text: "Hi James, congrats on the Dubai and Singapore expansion. Scaling outbound across new markets is a beast — are your reps doing localized research manually right now?"},
-          {role: "client", text: "Yeah, and it's killing our velocity. But I'm skeptical any AI tool can handle the nuance of different markets."},
-          {role: "sdr", text: "Fair point. Actually, one of our team recently proved this works best with a live demo — mind if I run it on 5 of your actual target accounts in the Singapore market? No setup, you'll see the localization quality in real-time."},
+          {role: "client", text: "Yeah, and it's killing our velocity. But I'm skeptical any AI tool can handle the nuance of different markets.", is_conflict: true, conflict_id: "Market-Specific Live Demo"},
+          {role: "sdr", text: "Fair point. Actually, one of our team recently proved this works best with a live demo — mind if I run it on 5 of your actual target accounts in the Singapore market? No setup, you'll see the localization quality in real-time.", is_conflict: true, conflict_id: "Market-Specific Live Demo", sdr_reasoning: "This prospect is skeptical about AI quality — words alone won't convince him. I'm adapting the Zero-Setup Live Proof technique learned from the Lattice conversation, but localizing it to their specific market (Singapore) to directly address the nuance concern.", skill_applied: "Zero-Setup Live Proof"},
           {role: "client", text: "Alright, if you can show me Singapore-specific output that doesn't sound like it was written by someone who's never been to Asia, I'm in."},
           {role: "sdr", text: "Challenge accepted. Let's book 15 minutes and I'll run it live. When works?"},
           {role: "client", text: "How about Friday morning?"},
@@ -2299,15 +2055,14 @@
           strategy: "Used the Zero-Setup Live Proof technique — offered to demonstrate on their actual target market accounts in real-time",
           skill_name: "Market-Specific Live Demo"
         }],
-        email: {subject: "Friday AM — Singapore market live demo", body: "Hi James,\n\nLooking forward to showing you live output on your Singapore target accounts. I'll make sure the localization quality speaks for itself.\n\nFriday morning — I'll send the invite.\n\n— Alex Rivera\nAcme Corp"},
       },
       4: { // Notion
         messages: [
           {role: "sdr", text: "Hi Elena, 40 new AEs at Notion — that's a big bet on outbound. How's the team keeping email quality consistent as you scale?"},
-          {role: "client", text: "It's a challenge. Honestly we're seeing quality drop as we onboard new reps. But we've been burned by automation tools that made emails feel robotic."},
-          {role: "sdr", text: "I hear that a lot — and it's usually because those tools template the email instead of templating the research. We do the opposite: deep research, then the email writes itself from real insights. Quality actually goes up with volume."},
-          {role: "client", text: "That's a different approach. But integrating with our existing tools could be a nightmare given our stack consolidation effort."},
-          {role: "sdr", text: "Actually, we've helped other teams going through stack consolidation — we can replace the research and personalization layers you're currently doing manually or with multiple tools. Net fewer tools, not more. Want me to put together a quick comparison specific to your stack?"},
+          {role: "client", text: "It's a challenge. Honestly we're seeing quality drop as we onboard new reps. But we've been burned by automation tools that made emails feel robotic.", is_conflict: true, conflict_id: "Research-First Differentiation"},
+          {role: "sdr", text: "I hear that a lot — and it's usually because those tools template the email instead of templating the research. We do the opposite: deep research, then the email writes itself from real insights. Quality actually goes up with volume.", is_conflict: true, conflict_id: "Research-First Differentiation", sdr_reasoning: "The prospect equates 'automation' with 'robotic.' I need to break that mental model by distinguishing our approach (research-first) from what burned them before (template-first). This reframes the entire category."},
+          {role: "client", text: "That's a different approach. But integrating with our existing tools could be a nightmare given our stack consolidation effort.", is_conflict: true, conflict_id: "Stack Consolidation Reframe"},
+          {role: "sdr", text: "Actually, we've helped other teams going through stack consolidation — we can replace the research and personalization layers you're currently doing manually or with multiple tools. Net fewer tools, not more. Want me to put together a quick comparison specific to your stack?", is_conflict: true, conflict_id: "Stack Consolidation Reframe", sdr_reasoning: "Applying the Stack Consolidation Reframe technique learned from the Rippling conversation — reposition as a tool that reduces stack size rather than adding to it. This directly addresses their consolidation initiative.", skill_applied: "Stack Consolidation Reframe"},
           {role: "client", text: "Yeah, let's take a look. Send me some times."},
         ],
         outcome: "meeting_booked",
@@ -2316,7 +2071,6 @@
           strategy: "Distinguish between 'templating the email' vs 'templating the research' — position as research-first approach where quality scales with volume",
           skill_name: "Research-First Differentiation"
         }],
-        email: {subject: "Stack comparison for Notion's outbound scaling", body: "Hi Elena,\n\nGreat chat. I'll map out how we'd fit into (and simplify) your current stack rather than adding complexity.\n\nI'll send some times for this week.\n\n— Alex Rivera\nAcme Corp"},
       },
     };
 
@@ -2338,6 +2092,7 @@
       await sleep(400);
 
       // Process all employees in PARALLEL
+      var demoSkillCounter = 0;
       // Each employee processes their leads sequentially, but employees run concurrently
       async function processEmployee(emp) {
         for (const leadIdx of emp.assigned_leads) {
@@ -2350,23 +2105,100 @@
           handleSSEEvent('employee_status', {employeeId: emp.id, leadIdx, stage: 'starting conversation'});
           await sleep(400);
 
-          // Stream conversation messages
+          // Stream conversation messages with tool calls injected
           const conv = DEMO_CONVERSATIONS[leadIdx];
           if (conv) {
-            for (const msg of conv.messages) {
+            for (var mi = 0; mi < conv.messages.length; mi++) {
+              var msg = conv.messages[mi];
+              var nextMsg = conv.messages[mi + 1];
+
               handleSSEEvent('conversation_message', {employeeId: emp.id, leadIdx, message: msg});
               await sleep(500 + Math.random() * 500);
+
+              // After a client objection, inject a tool_call BEFORE the SDR response
+              if (msg.is_conflict && msg.role === 'client' && nextMsg && nextMsg.role === 'sdr') {
+                await sleep(300);
+                if (nextMsg.skill_applied) {
+                  // use_skill tool call — applying a learned technique
+                  var skillObj = learnedSkills.find(function(s){return s.skill_name === nextMsg.skill_applied;});
+                  handleSSEEvent('tool_call', {
+                    employeeId: emp.id, leadIdx: leadIdx,
+                    tool: 'use_skill',
+                    input: {skill_name: nextMsg.skill_applied, reasoning: nextMsg.sdr_reasoning || ''},
+                    result: 'Skill activated: ' + nextMsg.skill_applied + '\nStrategy: ' + (skillObj ? skillObj.strategy : nextMsg.sdr_reasoning) + '\nApply this strategy in your next SDR response.'
+                  });
+                  handleSSEEvent('timeline_event', {event: {event_type:'skill_applied', agent_name:emp.name, lead_name:leads[leadIdx]?.name||'', detail:'use_skill(' + nextMsg.skill_applied + ') — ' + (nextMsg.sdr_reasoning||'')}});
+                } else {
+                  // report_new_skill tool call — inventing a new technique
+                  var objSkill = conv.objections_handled.find(function(o){return o.skill_name === nextMsg.conflict_id;}) || {};
+                  handleSSEEvent('tool_call', {
+                    employeeId: emp.id, leadIdx: leadIdx,
+                    tool: 'report_new_skill',
+                    input: {skill_name: nextMsg.conflict_id || '', strategy: objSkill.strategy || nextMsg.sdr_reasoning || '', objection_type: 'objection'},
+                    result: 'New skill registered: ' + (nextMsg.conflict_id||'') + '\nYour team will now learn this technique and can use it in future conversations.'
+                  });
+                  handleSSEEvent('timeline_event', {event: {event_type:'skill_extracted', agent_name:emp.name, lead_name:leads[leadIdx]?.name||'', detail:'report_new_skill(' + (nextMsg.conflict_id||'') + ') — ' + (objSkill.strategy||'')}});
+                }
+                await sleep(600);
+                handleSSEEvent('timeline_event', {event: {event_type:'resolution', agent_name:emp.name, lead_name:leads[leadIdx]?.name||'', detail:'Resolved using: ' + (nextMsg.conflict_id||'')}});
+                await sleep(200);
+              }
             }
 
-            // Skills
+            // Skills — routed through Johnny as overseer
+            var otherEmps = DEMO_MANAGER.employees.filter(function(e){return e.id !== emp.id;});
+            var demoApprovalMsgs = [
+              "Excellent find — deploying this to the whole team now.",
+              "This is exactly the edge we need. Teaching it to everyone.",
+              "Smart technique. I'm making this standard practice.",
+              "Good instinct. Sharing this with the rest of the squad.",
+            ];
+            var demoRejectMsgs = [
+              "Too situational — this won't generalize across our leads.",
+              "Interesting idea, but too aggressive for our brand voice.",
+            ];
             for (const skill of conv.objections_handled) {
               if (!learnedSkills.find(s => s.skill_name === skill.skill_name)) {
+                demoSkillCounter++;
+
+                // Employee discovers
                 handleSSEEvent('skill_learned', {employeeId: emp.id, skill});
+                handleSSEEvent('timeline_event', {event: {event_type:'skill_extracted', agent_name:emp.name, lead_name:leads[leadIdx]?.name||'', detail:'Learned: ' + skill.skill_name + ' — ' + skill.strategy}});
                 await sleep(300);
-                handleSSEEvent('manager_broadcast', {
-                  message: `${emp.name} discovered: "${skill.skill_name}" — sharing with all agents`,
-                  skill
-                });
+
+                // Johnny reviews
+                handleSSEEvent('manager_reviewing_skill', {employeeId: emp.id, employeeName: emp.name, skill});
+                await sleep(1000);
+
+                var isRejected = demoSkillCounter % 3 === 0;
+                if (isRejected) {
+                  var rejectMsg = demoRejectMsgs[demoSkillCounter % demoRejectMsgs.length];
+                  handleSSEEvent('manager_rejected_skill', {employeeId: emp.id, employeeName: emp.name, skill, reason: rejectMsg});
+                  handleSSEEvent('timeline_event', {event: {event_type:'skill_rejected', agent_name:'Johnny', lead_name:leads[leadIdx]?.name||'', detail:'Rejected "' + skill.skill_name + '" from ' + emp.name + ' — ' + rejectMsg}});
+                  await sleep(400);
+                  handleSSEEvent('manager_broadcast', {
+                    message: `Johnny reviewed "${skill.skill_name}" from ${emp.name} but decided to pass — ${rejectMsg}`,
+                    skill
+                  });
+                } else {
+                  var approveMsg = demoApprovalMsgs[demoSkillCounter % demoApprovalMsgs.length];
+                  handleSSEEvent('manager_approved_skill', {employeeId: emp.id, employeeName: emp.name, skill, approvalMessage: approveMsg});
+                  handleSSEEvent('timeline_event', {event: {event_type:'skill_extracted', agent_name:'Johnny', lead_name:leads[leadIdx]?.name||'', detail:'Approved "' + skill.skill_name + '" — ' + approveMsg}});
+                  await sleep(300);
+                  handleSSEEvent('teaching_moment', {
+                    teacherName: 'Johnny',
+                    teacherId: 'manager',
+                    skill: skill,
+                    recipients: otherEmps.map(function(e){return {id:e.id, name:e.name};}),
+                    timestamp: Date.now()/1000,
+                  });
+                  handleSSEEvent('timeline_event', {event: {event_type:'skill_shared', agent_name:'Johnny', lead_name:leads[leadIdx]?.name||'', detail:'Johnny is teaching "' + skill.skill_name + '" to the team', shared_with:otherEmps.map(function(e){return e.name;})}});
+                  await sleep(400);
+                  handleSSEEvent('manager_broadcast', {
+                    message: `Johnny approved "${skill.skill_name}" from ${emp.name} and is teaching it to the team.`,
+                    skill
+                  });
+                }
                 await sleep(600);
               }
             }
@@ -2379,7 +2211,6 @@
                 snapshot: 'Fast-growing company', signal: 'Expanding sales team',
                 painTags: ['outbound efficiency'], whyFit: 'Strong fit for AI SDR tooling'
               },
-              email: conv.email,
               conversation: conv.messages,
               outcome: conv.outcome,
             };
@@ -2424,444 +2255,20 @@
           painTags:  ['SDR ramp time', 'outbound efficiency', 'pipeline generation'],
           whyFit:    `${lead.title} typically owns SDR budget and has direct pain around rep productivity and pipeline quality.`,
         },
-        email: {
-          subject: `Quick question about ${lead.company}'s outbound motion`,
-          body:
-`Hi ${lead.name.split(' ')[0]},
-
-Noticed ${lead.company} is actively hiring SDRs — scaling outbound is clearly a priority right now.
-
-Most teams at your stage spend 60–70% of rep time on research and personalization before a single email goes out. We automate that entire layer so your reps focus on conversations, not prep.
-
-Happy to show you a live run on your actual lead list. 15 minutes?
-
-— ${repName}
-${company}`,
-        },
       };
     }
 
     /* ────────────────────────────────────────
        SCREEN 3 — REVIEW
     ──────────────────────────────────────── */
-    function goToReview() {
-      buildSidebar();
-      showScreen('screen-review');
-      selectLead(0);
-    }
-
-    function openReview(idx) {
-      buildSidebar();
-      showScreen('screen-review');
-      selectLead(idx);
-    }
-
-    function buildSidebar() {
-      const list = document.getElementById('sidebar-list');
-      list.innerHTML = '';
-      document.getElementById('sidebar-count').textContent = `${leads.length} leads`;
-      document.getElementById('review-meta').textContent = `${results.filter(Boolean).length} / ${leads.length} READY`;
-
-      leads.forEach((lead, i) => {
-        const r = results[i];
-        const score = r ? r.fitScore : 0;
-        const item = document.createElement('div');
-        item.className = 'sidebar-item';
-        item.id = `si-${i}`;
-        item.onclick = () => selectLead(i);
-
-        const scoreClass = score >= 8 ? 'score-high' : score >= 6 ? 'score-mid' : 'score-low';
-        item.innerHTML = `
-          <div class="si-name">${lead.name}</div>
-          <div class="si-company">${lead.company}</div>
-          ${r ? `<div class="si-score ${scoreClass}">fit ${score}/10</div>` : ''}
-        `;
-        list.appendChild(item);
-      });
-      updateSeqButton();
-    }
-
-    function selectLead(idx) {
-      // Sidebar highlight
-      document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-      const si = document.getElementById(`si-${idx}`);
-      if (si) si.classList.add('active');
-
-      const lead = leads[idx];
-      const result = results[idx];
-
-      if (!lead || !result) return;
-
-      activeLeadIdx = idx;
-
-      const firstName = lead.name.split(' ')[0];
-      const initials  = lead.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-
-      document.getElementById('rv-avatar').textContent   = initials;
-      document.getElementById('rv-name').textContent     = lead.name;
-      document.getElementById('rv-meta').textContent     = `${lead.title} · ${lead.company} · ${lead.email || ''}`;
-      document.getElementById('rv-score').textContent    = result.fitScore;
-      document.getElementById('rv-subject').textContent  = result.email.subject;
-
-      // Research cards
-      const r = result.research;
-      document.getElementById('rv-research').innerHTML = `
-        <div class="r-card">
-          <div class="rc-lbl">Company snapshot</div>
-          <div class="rc-val">${r.snapshot}</div>
-        </div>
-        <div class="r-card">
-          <div class="rc-lbl">Recent signal</div>
-          <div class="rc-val">${r.signal}</div>
-        </div>
-        <div class="r-card">
-          <div class="rc-lbl">Pain points</div>
-          <div class="rc-val">${r.painTags.map(t => `<span class="pain-tag">${t}</span>`).join('')}</div>
-        </div>
-        <div class="r-card">
-          <div class="rc-lbl">Why high fit</div>
-          <div class="rc-val">${result.fitReason}</div>
-        </div>
-      `;
-
-      // Email body — highlight first name and rep name
-      const bodyText = result.email.body;
-      document.getElementById('rv-body-text').innerHTML =
-        bodyText
-          .replace(/^(Hi \w+,)/m, '<span class="name">$1</span>')
-          .replace(new RegExp(`(— ${escapeRegex(document.getElementById('rep-name').value || 'Your Rep')})`, 'g'), '<span class="name">$1</span>');
-
-      // Exit edit mode when switching leads
-      if (editMode) toggleEditMode();
-
-      // Reset send button based on sent state
-      const sendBtn = document.getElementById('rv-send-btn');
-      if (sentLeads.has(idx)) {
-        sendBtn.textContent = '✓ Sent';
-        sendBtn.style.background = 'var(--green-bg)';
-        sendBtn.style.color = 'var(--green)';
-        sendBtn.disabled = true;
-      } else {
-        sendBtn.textContent = smtpConfigured && !demoMode ? 'Send email' : 'Mark sent';
-        sendBtn.disabled = false;
-        sendBtn.style.background = 'var(--green)';
-        sendBtn.style.color = '#071409';
-      }
-
-      // Show send-all button if SMTP configured and there are unsent leads
-      const sendAllBtn = document.getElementById('rv-send-all-btn');
-      const unsentCount = leads.filter((_, i) => !sentLeads.has(i) && !skippedLeads.has(i) && results[i]).length;
-      sendAllBtn.style.display = (smtpConfigured && !demoMode && unsentCount > 1) ? 'inline-block' : 'none';
-    }
-
-    async function markSent() {
-      const btn = document.getElementById('rv-send-btn');
-      const lead = leads[activeLeadIdx];
-      const result = results[activeLeadIdx];
-
-      if (!lead || !result?.email) return;
-
-      // If SMTP is configured, actually send the email
-      if (smtpConfigured && !demoMode) {
-        btn.textContent = 'Sending…';
-        btn.disabled = true;
-        btn.style.background = '#555';
-        btn.style.color = '#ccc';
-
-        try {
-          const resp = await fetch('http://localhost:8000/send-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              to: lead.email,
-              subject: result.email.subject,
-              body: result.email.body,
-              repName: document.getElementById('rep-name').value || 'Your Rep',
-            }),
-          });
-          const data = await resp.json();
-          if (!resp.ok) throw new Error(data.detail || data.error || 'Send failed');
-        } catch (err) {
-          btn.textContent = 'Send failed — retry';
-          btn.disabled = false;
-          btn.style.background = '#c0392b';
-          btn.style.color = '#fff';
-          console.error('Email send error:', err);
-          return;
-        }
-      }
-
-      btn.textContent = '✓ Sent';
-      btn.style.background = 'var(--green-bg)';
-      btn.style.color = 'var(--green)';
-      btn.disabled = true;
-
-      sentLeads.add(activeLeadIdx);
-      updateSeqButton();
-
-      // Auto-advance to next unsent lead that has results
-      setTimeout(() => {
-        let next = activeLeadIdx + 1;
-        while (next < leads.length && !results[next]) next++;
-        if (next < leads.length) selectLead(next);
-      }, 800);
-    }
-
-    function updateSeqButton() {
-      const btn = document.getElementById('view-seq-btn');
-      if (sentLeads.size > 0) {
-        btn.style.display = 'inline-block';
-      } else {
-        btn.style.display = 'none';
-      }
-    }
-
-    function skipLead() {
-      skippedLeads.add(activeLeadIdx);
-      const next = activeLeadIdx + 1;
-      if (next < leads.length) selectLead(next);
-    }
-
-    function copyEmail() {
-      const text = results[activeLeadIdx]?.email?.body || '';
-      navigator.clipboard.writeText(text).catch(() => {});
-      const btn = document.querySelector('.copy-btn');
-      btn.textContent = 'copied';
-      setTimeout(() => btn.textContent = 'copy', 1500);
-    }
-
-    /* ────────────────────────────────────────
-       SCREEN 4 — SEQUENCE VIEW
-    ──────────────────────────────────────── */
-    const FOLLOWUP_TEMPLATES = [
-      {
-        label: 'Follow-up',
-        dayOffset: 3,
-        getPreview: (lead, repName) =>
-`Hi ${lead.name.split(' ')[0]},
-
-Wanted to bump this to the top of your inbox. I know ${lead.company} is moving fast right now — happy to keep this to a tight 15 minutes.
-
-Any time this week work?
-
-— ${repName}`,
-      },
-      {
-        label: 'Follow-up 2',
-        dayOffset: 7,
-        getPreview: (lead, repName) =>
-`Hi ${lead.name.split(' ')[0]},
-
-Last note from me — I put together a 2-min walkthrough specific to ${lead.company}'s use case. Happy to share if there's any interest.
-
-Either way, no hard feelings. Wishing you and the team a strong quarter.
-
-— ${repName}`,
-      },
-    ];
-
-    function formatDate(date) {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    function goToSequence() {
-      const container = document.getElementById('seq-cards');
-      container.innerHTML = '';
-      const repName = document.getElementById('rep-name').value || 'Your Rep';
-      const today = new Date();
-
-      let cardIdx = 0;
-      leads.forEach((lead, i) => {
-        if (!sentLeads.has(i)) return;
-
-        const card = document.createElement('div');
-        card.className = 'seq-card';
-        card.style.animationDelay = (cardIdx * 80) + 'ms';
-        cardIdx++;
-
-        let nodesHTML = '';
-
-        // Node 1 — Sent email
-        nodesHTML += `
-          <div class="seq-node">
-            <div class="seq-connector"></div>
-            <div class="seq-node-dot sent"></div>
-            <div class="seq-node-label sent">Email 1</div>
-            <div class="seq-node-status">Sent</div>
-            <div class="seq-node-date">${formatDate(today)}</div>
-          </div>
-        `;
-
-        // Follow-up nodes
-        FOLLOWUP_TEMPLATES.forEach((tmpl, fi) => {
-          const futureDate = new Date(today);
-          futureDate.setDate(futureDate.getDate() + tmpl.dayOffset);
-          const previewId = `preview-${i}-${fi}`;
-
-          nodesHTML += `
-            <div class="seq-node">
-              ${fi < FOLLOWUP_TEMPLATES.length - 1 ? '<div class="seq-connector"></div>' : ''}
-              <div class="seq-node-dot scheduled"></div>
-              <div class="seq-node-label scheduled">${tmpl.label}</div>
-              <div class="seq-node-status">Scheduled</div>
-              <div class="seq-node-date">Day ${tmpl.dayOffset} — ${formatDate(futureDate)}</div>
-              <button class="seq-preview-btn" onclick="togglePreview('${previewId}')">Preview</button>
-              <div class="seq-preview-content" id="${previewId}">${tmpl.getPreview(lead, repName)}</div>
-            </div>
-          `;
-        });
-
-        card.innerHTML = `
-          <div class="seq-card-header">
-            <div class="seq-lead-name">${lead.name}</div>
-            <div class="seq-lead-meta">${lead.title} · ${lead.company}</div>
-          </div>
-          <div class="seq-timeline">
-            ${nodesHTML}
-          </div>
-        `;
-
-        container.appendChild(card);
-      });
-
-      showScreen('screen-sequence');
-    }
-
-    function togglePreview(id) {
-      const el = document.getElementById(id);
-      el.classList.toggle('open');
-    }
-
-    /* ────────────────────────────────────────
-       EMAIL EDITING
-    ──────────────────────────────────────── */
-    function toggleEditMode() {
-      editMode = !editMode;
-      const subjectDisplay = document.getElementById('rv-subject');
-      const subjectEdit = document.getElementById('rv-subject-edit');
-      const bodyDisplay = document.getElementById('rv-body-text');
-      const bodyEdit = document.getElementById('rv-body-edit');
-      const editBtn = document.getElementById('rv-edit-btn');
-      const result = results[activeLeadIdx];
-
-      if (editMode) {
-        // Enter edit mode
-        subjectEdit.value = result.email.subject;
-        bodyEdit.value = result.email.body;
-        subjectDisplay.style.display = 'none';
-        subjectEdit.style.display = 'block';
-        bodyDisplay.style.display = 'none';
-        bodyEdit.style.display = 'block';
-        editBtn.textContent = 'Save edits';
-        editBtn.style.background = 'var(--green)';
-        editBtn.style.color = '#071409';
-        subjectEdit.focus();
-      } else {
-        // Save and exit edit mode
-        result.email.subject = subjectEdit.value;
-        result.email.body = bodyEdit.value;
-        subjectDisplay.textContent = result.email.subject;
-        const bodyText = result.email.body;
-        bodyDisplay.innerHTML = bodyText
-          .replace(/^(Hi \w+,)/m, '<span class="name">$1</span>')
-          .replace(new RegExp(`(— ${escapeRegex(document.getElementById('rep-name').value || 'Your Rep')})`, 'g'), '<span class="name">$1</span>');
-        subjectDisplay.style.display = '';
-        subjectEdit.style.display = 'none';
-        bodyDisplay.style.display = '';
-        bodyEdit.style.display = 'none';
-        editBtn.textContent = 'Edit draft';
-        editBtn.style.background = 'var(--bg3)';
-        editBtn.style.color = 'var(--text2)';
-      }
-    }
-
-    /* ────────────────────────────────────────
-       SEND ALL EMAILS
-    ──────────────────────────────────────── */
-    async function sendAllEmails() {
-      const btn = document.getElementById('rv-send-all-btn');
-      const repName = document.getElementById('rep-name').value || 'Your Rep';
-
-      // Collect unsent leads with results
-      const toSend = [];
-      leads.forEach((lead, i) => {
-        if (!sentLeads.has(i) && !skippedLeads.has(i) && results[i]) {
-          toSend.push(i);
-        }
-      });
-
-      if (toSend.length === 0) return;
-
-      btn.disabled = true;
-      let sent = 0;
-      let failed = 0;
-
-      for (const idx of toSend) {
-        btn.textContent = `Sending ${sent + 1}/${toSend.length}...`;
-        const lead = leads[idx];
-        const result = results[idx];
-
-        try {
-          const resp = await fetch('http://localhost:8000/send-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              to: lead.email,
-              subject: result.email.subject,
-              body: result.email.body,
-              repName: repName,
-            }),
-          });
-          const data = await resp.json();
-          if (!resp.ok) throw new Error(data.detail || data.error);
-          sentLeads.add(idx);
-          sent++;
-        } catch (err) {
-          console.error(`Failed to send to ${lead.email}:`, err);
-          failed++;
-        }
-
-        // Update sidebar item to show sent state
-        updateSeqButton();
-      }
-
-      // Update UI
-      if (failed === 0) {
-        btn.textContent = `✓ All ${sent} sent`;
-        btn.style.background = 'var(--green-bg)';
-        btn.style.color = 'var(--green)';
-      } else {
-        btn.textContent = `${sent} sent, ${failed} failed`;
-        btn.style.background = 'var(--red-bg)';
-        btn.style.color = 'var(--red)';
-        btn.disabled = false;
-      }
-
-      // Refresh current lead view
-      selectLead(activeLeadIdx);
-
-      // Re-enable after delay
-      setTimeout(() => {
-        const unsent = leads.filter((_, i) => !sentLeads.has(i) && !skippedLeads.has(i) && results[i]).length;
-        if (unsent > 0) {
-          btn.textContent = `Send all (${unsent})`;
-          btn.style.background = 'var(--amber)';
-          btn.style.color = '#1a1400';
-          btn.disabled = false;
-        } else {
-          btn.style.display = 'none';
-        }
-      }, 2000);
-    }
 
     /* ────────────────────────────────────────
        SCREEN 6 — ANALYTICS DASHBOARD
     ──────────────────────────────────────── */
     function goToAnalytics() {
       const totalLeads = leads.length;
-      const sentCount = sentLeads.size;
       const skippedCount = skippedLeads.size;
-      const pendingCount = totalLeads - sentCount - skippedCount;
+      const processedCount = results.filter(Boolean).length;
 
       // Fit score stats
       let totalFit = 0;
@@ -2878,12 +2285,8 @@ Either way, no hard feelings. Wishing you and the team a strong quarter.
           <div class="stat-label">Total leads</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num green">${sentCount}</div>
-          <div class="stat-label">Emails sent</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num amber">${pendingCount}</div>
-          <div class="stat-label">Pending</div>
+          <div class="stat-num green">${processedCount}</div>
+          <div class="stat-label">Processed</div>
         </div>
         <div class="stat-card">
           <div class="stat-num red">${skippedCount}</div>
@@ -2901,19 +2304,7 @@ Either way, no hard feelings. Wishing you and the team a strong quarter.
         <div class="funnel-bar-wrap">
           <div class="funnel-bar-label">Processed</div>
           <div class="funnel-bar-track">
-            <div class="funnel-bar-fill green" style="width:${pct(fitCount)}%">${pct(fitCount)}%</div>
-          </div>
-        </div>
-        <div class="funnel-bar-wrap">
-          <div class="funnel-bar-label">Sent</div>
-          <div class="funnel-bar-track">
-            <div class="funnel-bar-fill green" style="width:${pct(sentCount)}%">${pct(sentCount)}%</div>
-          </div>
-        </div>
-        <div class="funnel-bar-wrap">
-          <div class="funnel-bar-label">Pending</div>
-          <div class="funnel-bar-track">
-            <div class="funnel-bar-fill amber" style="width:${pct(pendingCount)}%">${pct(pendingCount)}%</div>
+            <div class="funnel-bar-fill green" style="width:${pct(processedCount)}%">${pct(processedCount)}%</div>
           </div>
         </div>
         <div class="funnel-bar-wrap">
@@ -2930,12 +2321,11 @@ Either way, no hard feelings. Wishing you and the team a strong quarter.
       leads.forEach((lead, i) => {
         const result = results[i];
         let status, statusClass;
-        if (sentLeads.has(i)) { status = 'Sent'; statusClass = 'sent'; }
-        else if (skippedLeads.has(i)) { status = 'Skipped'; statusClass = 'skipped'; }
+        if (skippedLeads.has(i)) { status = 'Skipped'; statusClass = 'skipped'; }
+        else if (result) { status = 'Processed'; statusClass = 'sent'; }
         else { status = 'Pending'; statusClass = 'pending'; }
 
         const fitScore = result?.fitScore || '—';
-        const subject = result?.email?.subject || '—';
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -2943,7 +2333,6 @@ Either way, no hard feelings. Wishing you and the team a strong quarter.
           <td>${lead.company}</td>
           <td>${fitScore}/10</td>
           <td><span class="status-badge ${statusClass}">${status}</span></td>
-          <td>${subject}</td>
         `;
         tbody.appendChild(tr);
       });

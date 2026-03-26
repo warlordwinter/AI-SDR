@@ -9,17 +9,6 @@ RESEARCH_SYSTEM_PROMPT = (
     '{{\"snapshot\": \"...\", \"signal\": \"...\", \"painTags\": [\"...\"], \"whyFit\": \"...\"}}'
 )
 
-EMAIL_SYSTEM_PROMPT = (
-    "You are an expert SDR writing cold outreach. "
-    "Write a cold email from {rep_name} at {company} to {lead_name}, {lead_title} at {lead_company}. "
-    "Reference the signal: {signal}. "
-    "The email must: be under 100 words, reference one specific thing from the research, "
-    "end with a single soft CTA asking for 15 minutes, "
-    "never use the word 'synergy' or 'reaching out'. "
-    "Return ONLY JSON: "
-    '{{\"subject\": \"...\", \"body\": \"...\"}}'
-)
-
 FIT_SCORE_SYSTEM_PROMPT = (
     "You are a lead-scoring expert. Score this lead 1-10 based on: "
     "title seniority, company growth stage, and relevance to {product_desc}. "
@@ -51,30 +40,27 @@ MANAGER_SYSTEM_PROMPT = (
 )
 
 
-# ── CONVERSATION PROMPT ──
+# ── CONVERSATION PROMPT (tool-based) ──
 
 CONVERSATION_SYSTEM_PROMPT = (
     "You are simulating a realistic B2B sales conversation between an SDR and a prospect.\n\n"
     "SDR: {rep_name} from {company} — {persona}\n"
     "Prospect: {lead_name}, {lead_title} at {lead_company}\n"
     "Product: {product_desc}\n"
-    "Research signal: {signal}\n"
-    "{skills_section}"
-    "\n"
+    "Research signal: {signal}\n\n"
     "Generate a realistic multi-turn conversation (4-8 messages total). "
     "The prospect MUST raise at least one realistic objection or concern "
     "(e.g. budget constraints, timing, already have a solution, need to check with team). "
     "The SDR should handle the objection skillfully and move toward booking a meeting.\n\n"
+    "IMPORTANT TOOL USAGE:\n"
+    "- When the prospect raises an objection, BEFORE writing the SDR's response, "
+    "call the use_skill tool if a relevant learned skill exists, OR call report_new_skill "
+    "if you invent a new technique to handle it.\n"
+    "- You MUST call one of these tools for EVERY objection encountered.\n"
+    "- After all tool calls, continue the conversation.\n\n"
     "The conversation should feel natural — not scripted. Prospects don't always say yes.\n\n"
     "Return ONLY JSON:\n"
-    '{{"messages": [{{"role": "sdr", "text": "..."}}, {{"role": "client", "text": "..."}}], '
+    '{{"messages": [{{"role": "sdr"|"client", "text": "..."}}], '
     '"outcome": "meeting_booked|follow_up|not_interested", '
-    '"objections_handled": [{{"objection": "what they said", "strategy": "how SDR handled it", "skill_name": "Short Technique Name"}}], '
-    '"email": {{"subject": "follow-up subject", "body": "follow-up email body under 80 words"}}}}'
-)
-
-
-SKILLS_INJECTION = (
-    "\nYour team has learned these objection-handling techniques from other conversations. "
-    "Use them when relevant:\n{skills_list}\n"
+    '"email": {{"subject": "...", "body": "..."}}}}'
 )

@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(mkdir -p \"/c/Users/18019/.claude/plans\")",
+      "Read(//c/Users/18019/.claude/plans//**)"
     ]
   }
 }

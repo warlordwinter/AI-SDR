@@ -9,10 +9,8 @@ import asyncio
 import json
 import logging
 import os
-import smtplib
+import random
 import time
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 from dotenv import load_dotenv
 
@@ -26,6 +24,7 @@ from starlette.responses import StreamingResponse
 
 from agent import run_pipeline
 from manager import analyze_and_delegate, run_conversation, extract_new_skills
+import knowledge
 
 # ── Logging ──
 logging.basicConfig(level=logging.INFO, format="%(asctime)s  %(message)s")
@@ -63,16 +62,25 @@ class RunBatchRequest(BaseModel):
     productDesc: str
 
 
-class SendEmailRequest(BaseModel):
-    to: str
-    subject: str
-    body: str
-    repName: str
-
-
 # ── Helpers ──
 def _sse_event(event: str, data: dict) -> str:
     return f"event: {event}\ndata: {json.dumps(data)}\n\n"
+
+
+JOHNNY_APPROVAL_MESSAGES = [
+    "Excellent find — deploying this to the whole team now.",
+    "This is exactly the edge we need. Teaching it to everyone.",
+    "Smart technique. I'm making this standard practice.",
+    "Good instinct. Sharing this with the rest of the squad.",
+    "I like this approach. Rolling it out team-wide.",
+]
+
+JOHNNY_REJECTION_MESSAGES = [
+    "Too situational — this won't generalize across our leads.",
+    "We already have a stronger version of this. Passing.",
+    "Interesting idea, but too aggressive for our brand voice.",
+    "Not enough signal here. Let's wait for more data before teaching this.",
+]
 
 
 # ── Endpoints ──
@@ -100,7 +108,9 @@ async def run_batch(req: RunBatchRequest):
 
     async def event_stream():
         logger = logging.getLogger("sdr-manager")
-        skills: list[dict] = []
+        batch_id = f"batch-{int(time.time())}"
+        # Load persisted skills from previous batches
+        skills: list[dict] = list(knowledge.knowledge_base)
 
         # Step 1: Manager thinking
         yield _sse_event("manager_thinking", {"message": f"Analyzing {len(leads_raw)} leads..."})
@@ -129,6 +139,7 @@ async def run_batch(req: RunBatchRequest):
         # Use an asyncio.Queue so concurrent workers can push SSE events
         event_queue: asyncio.Queue = asyncio.Queue()
         results_map: dict[int, dict] = {}
+        skill_review_counter = 0
 
         async def process_lead(emp, lead_idx):
             emp_id = emp["id"]
@@ -166,20 +177,144 @@ async def run_batch(req: RunBatchRequest):
                     "message": msg,
                 }))
 
+            # Emit tool call events — these are the verifiable skill usage evidence
+            for tc in result.get("tool_calls", []):
+                await event_queue.put(_sse_event("tool_call", {
+                    "employeeId": emp_id,
+                    "leadIdx": lead_idx,
+                    "tool": tc["tool"],
+                    "input": tc["input"],
+                    "result": tc["result"],
+                }))
+                # Timeline events for tool calls
+                if tc["tool"] == "use_skill":
+                    evt = knowledge.add_timeline_event(
+                        event_type="skill_applied",
+                        agent_name=emp.get("name", emp_id),
+                        lead_name=lead.get("name", ""),
+                        detail=f"use_skill({tc['input'].get('skill_name', '')}) — {tc['input'].get('reasoning', '')}",
+                    )
+                    await event_queue.put(_sse_event("timeline_event", {"event": evt}))
+                elif tc["tool"] == "report_new_skill":
+                    evt = knowledge.add_timeline_event(
+                        event_type="skill_extracted",
+                        agent_name=emp.get("name", emp_id),
+                        lead_name=lead.get("name", ""),
+                        detail=f"report_new_skill({tc['input'].get('skill_name', '')}) — {tc['input'].get('strategy', '')}",
+                    )
+                    await event_queue.put(_sse_event("timeline_event", {"event": evt}))
+
             # Check for new skills
             new_skills = extract_new_skills(
                 result.get("objections_handled", []), skills
             )
+            # Collect other employee names for teaching event
+            other_employees = [e for e in employees if e["id"] != emp_id]
+
+            nonlocal skill_review_counter
             for skill in new_skills:
-                skills.append(skill)
+                skill_name = skill.get("skill_name", "")
+                emp_name = emp.get("name", emp_id)
+
+                # Employee discovered the skill
                 await event_queue.put(_sse_event("skill_learned", {
                     "employeeId": emp_id,
                     "skill": skill,
                 }))
-                await event_queue.put(_sse_event("manager_broadcast", {
-                    "message": f"{emp.get('name', emp_id)} discovered a new technique: {skill.get('skill_name', '')}",
+
+                # Johnny reviews the skill
+                await event_queue.put(_sse_event("manager_reviewing_skill", {
+                    "employeeId": emp_id,
+                    "employeeName": emp_name,
                     "skill": skill,
                 }))
+                await asyncio.sleep(0.8)
+
+                # Approve/reject: every 3rd skill gets rejected
+                skill_review_counter += 1
+                rejected = skill_review_counter % 3 == 0
+
+                if rejected:
+                    reason = JOHNNY_REJECTION_MESSAGES[
+                        skill_review_counter % len(JOHNNY_REJECTION_MESSAGES)
+                    ]
+                    # Still track so it doesn't get re-discovered
+                    skill["rejected"] = True
+                    skills.append(skill)
+
+                    await event_queue.put(_sse_event("manager_rejected_skill", {
+                        "employeeId": emp_id,
+                        "employeeName": emp_name,
+                        "skill": skill,
+                        "reason": reason,
+                    }))
+
+                    evt_reject = knowledge.add_timeline_event(
+                        event_type="skill_rejected",
+                        agent_name="Johnny",
+                        lead_name=lead.get("name", ""),
+                        detail=f"Rejected '{skill_name}' from {emp_name} — {reason}",
+                    )
+                    await event_queue.put(_sse_event("timeline_event", {"event": evt_reject}))
+
+                    await event_queue.put(_sse_event("manager_broadcast", {
+                        "message": f"Johnny reviewed '{skill_name}' from {emp_name} but decided to pass — {reason}",
+                        "skill": skill,
+                    }))
+                else:
+                    approval_msg = JOHNNY_APPROVAL_MESSAGES[
+                        skill_review_counter % len(JOHNNY_APPROVAL_MESSAGES)
+                    ]
+                    skills.append(skill)
+                    # Persist to cross-batch knowledge base
+                    kb_entry = knowledge.add_skill(
+                        skill_name=skill_name,
+                        strategy=skill.get("strategy", ""),
+                        source_agent=emp_name,
+                        source_lead=lead.get("name", ""),
+                        batch_id=batch_id,
+                    )
+
+                    await event_queue.put(_sse_event("manager_approved_skill", {
+                        "employeeId": emp_id,
+                        "employeeName": emp_name,
+                        "skill": skill,
+                        "approvalMessage": approval_msg,
+                    }))
+
+                    # Timeline: skill extracted & approved
+                    evt_skill = knowledge.add_timeline_event(
+                        event_type="skill_extracted",
+                        agent_name="Johnny",
+                        lead_name=lead.get("name", ""),
+                        detail=f"Approved '{skill_name}' from {emp_name} — {approval_msg}",
+                        related_skill_id=kb_entry["id"],
+                    )
+                    await event_queue.put(_sse_event("timeline_event", {"event": evt_skill}))
+
+                    # Teaching moment: Johnny teaches the team
+                    recipients = [{"id": e["id"], "name": e.get("name", e["id"])} for e in other_employees]
+                    evt_teach = knowledge.add_timeline_event(
+                        event_type="skill_shared",
+                        agent_name="Johnny",
+                        lead_name=lead.get("name", ""),
+                        detail=f"Johnny is teaching '{skill_name}' to the team",
+                        related_skill_id=kb_entry["id"],
+                        shared_with=[r["name"] for r in recipients],
+                    )
+                    await event_queue.put(_sse_event("teaching_moment", {
+                        "teacherName": "Johnny",
+                        "teacherId": "manager",
+                        "skill": skill,
+                        "recipients": recipients,
+                        "timestamp": evt_teach["timestamp"],
+                    }))
+                    await event_queue.put(_sse_event("timeline_event", {"event": evt_teach}))
+
+                    await event_queue.put(_sse_event("manager_broadcast", {
+                        "message": f"Johnny approved '{skill_name}' from {emp_name} and is teaching it to the team.",
+                        "skill": skill,
+                    }))
 
             results_map[lead_idx] = result
             await event_queue.put(_sse_event("lead_complete", {
@@ -223,53 +358,18 @@ async def run_batch(req: RunBatchRequest):
     )
 
 
-@app.get("/email-config")
-async def email_config():
-    """Check whether SMTP is configured so the frontend can adapt."""
-    configured = bool(os.getenv("SMTP_USER") and os.getenv("SMTP_PASS"))
-    return {"configured": configured, "from_email": os.getenv("SMTP_USER", "")}
+# ── Knowledge Base Endpoints ──
+@app.get("/knowledge-base")
+async def get_knowledge_base():
+    return {"skills": knowledge.knowledge_base, "count": len(knowledge.knowledge_base)}
 
 
-@app.post("/send-email")
-async def send_email(req: SendEmailRequest):
-    smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
-    smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    smtp_user = os.getenv("SMTP_USER")
-    smtp_pass = os.getenv("SMTP_PASS")
-
-    if not smtp_user or not smtp_pass:
-        return JSONResponse(
-            status_code=400,
-            content={"error": "SMTP not configured. Set SMTP_USER and SMTP_PASS in .env"},
-        )
-
-    msg = MIMEMultipart("alternative")
-    msg["From"] = f"{req.repName} <{smtp_user}>"
-    msg["To"] = req.to
-    msg["Subject"] = req.subject
-
-    # Plain text version
-    msg.attach(MIMEText(req.body, "plain"))
-
-    # Simple HTML version (preserves line breaks)
-    html_body = req.body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br>")
-    html = f"<html><body><p style='font-family:sans-serif;font-size:14px;color:#222'>{html_body}</p></body></html>"
-    msg.attach(MIMEText(html, "html"))
-
-    try:
-        await asyncio.to_thread(_smtp_send, smtp_host, smtp_port, smtp_user, smtp_pass, msg)
-        logging.getLogger("sdr-email").info("Email sent to %s — %s", req.to, req.subject)
-        return {"status": "sent", "to": req.to}
-    except Exception as e:
-        logging.getLogger("sdr-email").error("Send failed: %s", e, exc_info=True)
-        return JSONResponse(
-            status_code=500,
-            content={"error": "Failed to send email", "detail": str(e)},
-        )
+@app.get("/learning-timeline")
+async def get_learning_timeline():
+    return {"events": knowledge.learning_timeline, "count": len(knowledge.learning_timeline)}
 
 
-def _smtp_send(host, port, user, password, msg):
-    with smtplib.SMTP(host, port) as server:
-        server.starttls()
-        server.login(user, password)
-        server.send_message(msg)
+@app.delete("/knowledge-base")
+async def clear_knowledge_base():
+    knowledge.clear()
+    return {"status": "cleared"}
