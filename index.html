@@ -912,8 +912,8 @@
 
     .cmd-body {
       flex: 1; display: grid;
-      grid-template-columns: 1fr 260px;
-      grid-template-rows: auto 1fr auto;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr auto auto;
       gap: 0; overflow: hidden; min-height: 0;
     }
 
@@ -961,34 +961,27 @@
     .mgr-stat-num { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--text); }
     .mgr-stat-lbl { font-family: var(--mono); font-size: 9px; color: var(--text4); text-transform: uppercase; letter-spacing: .08em; }
 
-    /* Employee + conversation area */
+    /* Main area: agent cards with conversations */
     .cmd-main {
       display: flex; flex-direction: column;
-      overflow-y: auto; border-right: 1px solid var(--border);
+      overflow-y: auto;
     }
 
-    /* Employee cards row */
+    /* Employee cards — big, side by side, each with own conversation */
     .employee-grid {
-      display: flex; gap: 12px; padding: 18px 24px;
-      overflow-x: auto; flex-shrink: 0;
-      border-bottom: 1px solid var(--border);
+      display: flex; gap: 16px; padding: 20px 24px;
+      flex: 1; overflow-x: auto; align-items: stretch;
     }
 
     .employee-card {
       background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      min-width: 180px; max-width: 220px;
-      flex-shrink: 0;
+      border-radius: 12px;
+      flex: 1; min-width: 320px;
+      display: flex; flex-direction: column;
       animation: fadeSlideIn .4s ease both;
       transition: border-color .3s, box-shadow .3s;
-      cursor: pointer;
-    }
-
-    .employee-card.active-emp {
-      border-color: var(--green-bd);
-      background: var(--green-bg);
+      overflow: hidden;
     }
 
     .employee-card.skill-flash {
@@ -1000,10 +993,15 @@
       50% { box-shadow: 0 0 16px 4px rgba(74, 254, 138, .25); }
     }
 
-    .emp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .emp-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
 
     .emp-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
+      width: 36px; height: 36px; border-radius: 50%;
       background: var(--bg3); border: 1px solid var(--border2);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
@@ -1011,38 +1009,60 @@
 
     .emp-avatar svg { opacity: .5; }
 
-    .emp-name { font-size: 12px; font-weight: 500; color: var(--text); }
-    .emp-spec { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 1px; }
+    .emp-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .emp-spec { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 2px; }
 
-    .emp-leads { margin-top: 8px; }
-
-    .emp-lead-row {
-      display: flex; align-items: center; gap: 6px;
-      padding: 3px 0; font-size: 11px; color: var(--text3);
+    .emp-status-tag {
+      margin-left: auto;
+      font-family: var(--mono); font-size: 9px;
+      padding: 3px 8px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: .06em;
     }
+
+    .emp-status-tag.idle { background: var(--bg3); color: var(--text4); }
+    .emp-status-tag.active { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+    .emp-status-tag.done { background: var(--green-bg); color: var(--green); }
+
+    /* Lead tabs inside card */
+    .emp-lead-tabs {
+      display: flex; gap: 0; border-bottom: 1px solid var(--border);
+      flex-shrink: 0; overflow-x: auto;
+    }
+
+    .emp-lead-tab {
+      padding: 8px 14px; font-size: 11px; color: var(--text4);
+      cursor: pointer; border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s;
+      display: flex; align-items: center; gap: 6px;
+      white-space: nowrap;
+    }
+
+    .emp-lead-tab:hover { color: var(--text2); }
+    .emp-lead-tab.active-tab { color: var(--green); border-bottom-color: var(--green); }
 
     .emp-lead-dot {
       width: 5px; height: 5px; border-radius: 50%;
       flex-shrink: 0;
     }
 
-    /* Conversation panel */
-    .conversation-panel {
+    /* Conversation area inside each card */
+    .emp-conversation {
       flex: 1; overflow-y: auto;
-      padding: 18px 24px;
-      display: flex; flex-direction: column; gap: 10px;
+      padding: 12px 14px;
+      display: flex; flex-direction: column; gap: 8px;
+      min-height: 200px;
     }
 
     .conv-header {
       font-family: var(--mono); font-size: 10px; color: var(--text4);
       text-transform: uppercase; letter-spacing: .1em;
-      margin-bottom: 6px; flex-shrink: 0;
+      margin-bottom: 4px; flex-shrink: 0;
     }
 
     .chat-bubble {
-      max-width: 80%; padding: 10px 14px;
-      border-radius: 10px; font-size: 12px;
-      line-height: 1.6; animation: fadeSlideIn .25s ease both;
+      max-width: 85%; padding: 8px 12px;
+      border-radius: 10px; font-size: 11px;
+      line-height: 1.55; animation: fadeSlideIn .25s ease both;
     }
 
     .bubble-sdr {
@@ -1056,67 +1076,82 @@
     }
 
     .bubble-label {
-      font-family: var(--mono); font-size: 9px;
+      font-family: var(--mono); font-size: 8px;
       text-transform: uppercase; letter-spacing: .06em;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .bubble-sdr .bubble-label { color: var(--green); }
     .bubble-client .bubble-label { color: var(--text4); }
 
-    /* Skills panel (right sidebar) */
-    .skills-panel {
-      grid-row: 2 / 4;
-      display: flex; flex-direction: column;
-      overflow-y: auto; background: var(--bg2);
-    }
-
-    .skills-header {
+    .emp-conv-placeholder {
+      flex: 1; display: flex; align-items: center; justify-content: center;
       font-family: var(--mono); font-size: 10px; color: var(--text4);
-      text-transform: uppercase; letter-spacing: .1em;
-      padding: 16px 16px 12px; border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
+      font-style: italic;
     }
 
-    .skills-list { padding: 12px 16px; flex: 1; }
+    /* Skills bar — compact bottom strip */
+    .skills-bar {
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      padding: 10px 24px;
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0; overflow-x: auto;
+    }
 
-    .skill-item {
-      padding: 10px 12px; margin-bottom: 8px;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 8px; animation: skillAppear .5s ease both;
+    .skills-bar-label {
+      font-family: var(--mono); font-size: 9px; color: var(--text4);
+      text-transform: uppercase; letter-spacing: .1em;
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    .skills-bar-items {
+      display: flex; gap: 8px; overflow-x: auto; flex: 1;
+    }
+
+    .skill-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--green-bg); border: 1px solid var(--green-bd);
+      border-radius: 6px; padding: 4px 10px;
+      font-family: var(--mono); font-size: 10px; color: var(--green);
+      white-space: nowrap; flex-shrink: 0;
+      animation: skillAppear .4s ease both;
+      cursor: default;
+      position: relative;
+    }
+
+    .skill-chip:hover .skill-tooltip { display: block; }
+
+    .skill-tooltip {
+      display: none; position: absolute; bottom: calc(100% + 6px); left: 0;
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 6px; padding: 8px 10px;
+      font-size: 10px; color: var(--text2); line-height: 1.5;
+      min-width: 220px; max-width: 300px; white-space: normal;
+      z-index: 50; box-shadow: 0 4px 12px rgba(0,0,0,.4);
+    }
+
+    .skill-tooltip-source {
+      font-size: 9px; color: var(--text4); margin-top: 4px;
     }
 
     @keyframes skillAppear {
-      from { opacity: 0; transform: translateX(20px); }
-      to { opacity: 1; transform: translateX(0); }
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .skill-name {
-      font-size: 11px; font-weight: 500; color: var(--green);
-      margin-bottom: 4px;
-    }
-
-    .skill-strategy {
-      font-size: 10px; color: var(--text3); line-height: 1.5;
-    }
-
-    .skill-source {
-      font-family: var(--mono); font-size: 9px; color: var(--text4);
-      margin-top: 4px;
-    }
-
-    .skills-empty {
-      padding: 20px 16px; text-align: center;
-      font-size: 11px; color: var(--text4); font-style: italic;
+    .skills-empty-msg {
+      font-family: var(--mono); font-size: 10px; color: var(--text4);
+      font-style: italic;
     }
 
     /* Activity feed */
     .activity-feed {
       grid-column: 1;
       border-top: 1px solid var(--border);
-      padding: 10px 24px;
-      max-height: 120px; overflow-y: auto;
-      display: flex; flex-direction: column; gap: 4px;
+      padding: 8px 24px;
+      max-height: 80px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 3px;
     }
 
     .feed-item {
@@ -1215,7 +1250,7 @@
         </div>
 
         <button class="run-btn" id="run-btn" onclick="startPipeline()">
-          Run agent on {{ leadCount }} leads →
+          Deploy Sales Team →
         </button>
 
         <div class="csv-hint">Expected columns: name · title · company · email</div>
@@ -1426,26 +1461,25 @@
         </div>
       </div>
 
-      <!-- Main area: employees + conversation -->
+      <!-- Main area: agent cards with embedded conversations -->
       <div class="cmd-main">
         <div class="employee-grid" id="employee-grid"></div>
-        <div class="conv-header" style="padding: 18px 24px 0;" id="conv-header">Conversation</div>
-        <div class="conversation-panel" id="conversation-panel"></div>
-        <button class="cmd-review-btn" id="cmd-review-btn" disabled onclick="goToReview()">
-          Review all emails &rarr;
-        </button>
       </div>
 
-      <!-- Skills panel (right sidebar) -->
-      <div class="skills-panel">
-        <div class="skills-header">Team Skills <span id="skills-count">(0)</span></div>
-        <div class="skills-list" id="skills-list">
-          <div class="skills-empty" id="skills-empty">Skills will appear here as agents learn from conversations</div>
+      <!-- Skills bar — compact bottom strip -->
+      <div class="skills-bar">
+        <div class="skills-bar-label">Team Skills <span id="skills-count">(0)</span></div>
+        <div class="skills-bar-items" id="skills-list">
+          <span class="skills-empty-msg" id="skills-empty">Agents learn skills from handling objections...</span>
         </div>
       </div>
 
       <!-- Activity feed -->
       <div class="activity-feed" id="activity-feed"></div>
+
+      <button class="cmd-review-btn" id="cmd-review-btn" disabled onclick="goToReview()" style="margin:0 24px 16px;">
+        Review all emails &rarr;
+      </button>
     </div>
   </div>
 
@@ -1665,8 +1699,7 @@
       document.getElementById('mgr-lead-count').textContent = leads.length;
       document.getElementById('cmd-meta').textContent = `SALES MANAGER · ${leads.length} LEADS`;
       document.getElementById('employee-grid').innerHTML = '';
-      document.getElementById('conversation-panel').innerHTML = '';
-      document.getElementById('skills-list').innerHTML = '<div class="skills-empty" id="skills-empty">Skills will appear here as agents learn from conversations</div>';
+      document.getElementById('skills-list').innerHTML = '<span class="skills-empty-msg" id="skills-empty">Agents learn skills from handling objections...</span>';
       document.getElementById('activity-feed').innerHTML = '';
       document.getElementById('skills-count').textContent = '(0)';
       document.getElementById('mgr-emp-count').textContent = '0';
@@ -1693,6 +1726,8 @@
       feed.scrollTop = feed.scrollHeight;
     }
 
+    let activeConvKey = {};  // empId -> current leadIdx being shown
+
     function addEmployeeCard(emp) {
       const grid = document.getElementById('employee-grid');
       const card = document.createElement('div');
@@ -1700,11 +1735,12 @@
       card.id = `emp-card-${emp.id}`;
       card.style.animationDelay = (Object.keys(employeeMap).length * 150) + 'ms';
 
-      const leadsHtml = (emp.assigned_leads || []).map(idx => {
+      const tabsHtml = (emp.assigned_leads || []).map((idx, ti) => {
         const l = leads[idx];
-        return `<div class="emp-lead-row" id="emp-lead-${emp.id}-${idx}">
+        return `<div class="emp-lead-tab ${ti === 0 ? 'active-tab' : ''}" id="emp-tab-${emp.id}-${idx}"
+                     onclick="switchEmpConv('${emp.id}', ${idx})">
           <div class="emp-lead-dot dot-waiting" id="emp-dot-${emp.id}-${idx}"></div>
-          ${l ? l.name : 'Lead ' + idx}
+          ${l ? l.name.split(' ')[0] : 'Lead ' + idx}
         </div>`;
       }).join('');
 
@@ -1715,31 +1751,107 @@
             <div class="emp-name">${emp.name}</div>
             <div class="emp-spec">${emp.specialization}</div>
           </div>
+          <div class="emp-status-tag idle" id="emp-status-${emp.id}">Idle</div>
         </div>
-        <div class="emp-leads">${leadsHtml}</div>
+        <div class="emp-lead-tabs">${tabsHtml}</div>
+        <div class="emp-conversation" id="emp-conv-${emp.id}">
+          <div class="emp-conv-placeholder">Waiting for assignment...</div>
+        </div>
       `;
       grid.appendChild(card);
       employeeMap[emp.id] = emp;
+      // Track conversation containers per lead
+      emp._convMessages = {};  // leadIdx -> [messages]
+      if (emp.assigned_leads?.length) activeConvKey[emp.id] = emp.assigned_leads[0];
       document.getElementById('mgr-emp-count').textContent = Object.keys(employeeMap).length;
+    }
+
+    function switchEmpConv(empId, leadIdx) {
+      activeConvKey[empId] = leadIdx;
+      const emp = employeeMap[empId];
+      if (!emp) return;
+      // Update tab highlights
+      (emp.assigned_leads || []).forEach(idx => {
+        const tab = document.getElementById(`emp-tab-${empId}-${idx}`);
+        if (tab) tab.classList.toggle('active-tab', idx === leadIdx);
+      });
+      // Re-render conversation
+      renderEmpConv(empId, leadIdx);
+    }
+
+    function renderEmpConv(empId, leadIdx) {
+      const panel = document.getElementById(`emp-conv-${empId}`);
+      if (!panel) return;
+      const emp = employeeMap[empId];
+      const msgs = emp?._convMessages?.[leadIdx] || [];
+      if (msgs.length === 0) {
+        panel.innerHTML = '<div class="emp-conv-placeholder">Waiting...</div>';
+        return;
+      }
+      const lead = leads[leadIdx];
+      const clientName = lead?.name?.split(' ')[0] || 'Client';
+      panel.innerHTML = msgs.map(m => {
+        const isSdr = m.role === 'sdr';
+        return `<div class="chat-bubble ${isSdr ? 'bubble-sdr' : 'bubble-client'}">
+          <div class="bubble-label">${isSdr ? emp.name : clientName}</div>${m.text}
+        </div>`;
+      }).join('');
+      panel.scrollTop = panel.scrollHeight;
     }
 
     function updateLeadDot(empId, leadIdx, status) {
       const dot = document.getElementById(`emp-dot-${empId}-${leadIdx}`);
       if (!dot) return;
-      if (status === 'active') { dot.className = 'emp-lead-dot dot-active'; }
-      else if (status === 'done') { dot.className = 'emp-lead-dot dot-done'; }
+      if (status === 'active') {
+        dot.className = 'emp-lead-dot dot-active';
+        const tag = document.getElementById(`emp-status-${empId}`);
+        if (tag) { tag.className = 'emp-status-tag active'; tag.textContent = 'Active'; }
+        // Auto-switch to this conversation
+        switchEmpConv(empId, leadIdx);
+        // Clear previous messages for this lead
+        const emp = employeeMap[empId];
+        if (emp) emp._convMessages[leadIdx] = [];
+        renderEmpConv(empId, leadIdx);
+      }
+      else if (status === 'done') {
+        dot.className = 'emp-lead-dot dot-done';
+        // Check if all leads done for this employee
+        const emp = employeeMap[empId];
+        if (emp) {
+          const allDone = emp.assigned_leads.every(idx => {
+            const d = document.getElementById(`emp-dot-${empId}-${idx}`);
+            return d && d.classList.contains('dot-done');
+          });
+          if (allDone) {
+            const tag = document.getElementById(`emp-status-${empId}`);
+            if (tag) { tag.className = 'emp-status-tag done'; tag.textContent = 'Done'; }
+          }
+        }
+      }
       else if (status === 'error') { dot.className = 'emp-lead-dot dot-error'; }
     }
 
-    function addChatBubble(msg, empName) {
-      const panel = document.getElementById('conversation-panel');
-      const div = document.createElement('div');
-      const isSdr = msg.role === 'sdr';
-      div.className = `chat-bubble ${isSdr ? 'bubble-sdr' : 'bubble-client'}`;
-      const label = isSdr ? empName || 'SDR' : leads[0]?.name?.split(' ')[0] || 'Client';
-      div.innerHTML = `<div class="bubble-label">${label}</div>${msg.text}`;
-      panel.appendChild(div);
-      panel.scrollTop = panel.scrollHeight;
+    function addChatBubble(msg, empId, leadIdx) {
+      const emp = employeeMap[empId];
+      if (!emp) return;
+      if (!emp._convMessages[leadIdx]) emp._convMessages[leadIdx] = [];
+      emp._convMessages[leadIdx].push(msg);
+      // Only render if this is the currently visible conversation for this employee
+      if (activeConvKey[empId] === leadIdx) {
+        const panel = document.getElementById(`emp-conv-${empId}`);
+        if (!panel) return;
+        // Remove placeholder
+        const ph = panel.querySelector('.emp-conv-placeholder');
+        if (ph) ph.remove();
+        const lead = leads[leadIdx];
+        const clientName = lead?.name?.split(' ')[0] || 'Client';
+        const isSdr = msg.role === 'sdr';
+        const div = document.createElement('div');
+        div.className = `chat-bubble ${isSdr ? 'bubble-sdr' : 'bubble-client'}`;
+        div.innerHTML = `<div class="bubble-label">${isSdr ? emp.name : clientName}</div>${msg.text}`;
+        panel.appendChild(div);
+        panel.scrollTop = panel.scrollHeight;
+      }
     }
 
     function addSkillToPanel(skill, empName) {
@@ -1747,14 +1859,16 @@
       const empty = document.getElementById('skills-empty');
       if (empty) empty.remove();
 
-      const div = document.createElement('div');
-      div.className = 'skill-item';
-      div.innerHTML = `
-        <div class="skill-name">${skill.skill_name}</div>
-        <div class="skill-strategy">${skill.strategy}</div>
-        <div class="skill-source">Learned by ${empName}</div>
+      const chip = document.createElement('div');
+      chip.className = 'skill-chip';
+      chip.innerHTML = `
+        &#9889; ${skill.skill_name}
+        <div class="skill-tooltip">
+          ${skill.strategy}
+          <div class="skill-tooltip-source">Learned by ${empName}</div>
+        </div>
       `;
-      list.appendChild(div);
+      list.appendChild(chip);
       learnedSkills.push(skill);
       document.getElementById('skills-count').textContent = `(${learnedSkills.length})`;
       document.getElementById('mgr-skill-count').textContent = learnedSkills.length;
@@ -1854,14 +1968,10 @@
         case 'employee_status':
           updateLeadDot(data.employeeId, data.leadIdx, 'active');
           addFeedItem(`${employeeMap[data.employeeId]?.name || data.employeeId}: ${data.stage} for ${leads[data.leadIdx]?.name || '?'}`);
-          // Update conversation header
-          document.getElementById('conv-header').textContent =
-            `${employeeMap[data.employeeId]?.name || 'Agent'} → ${leads[data.leadIdx]?.name || 'Lead'}`;
-          document.getElementById('conversation-panel').innerHTML = '';
           break;
 
         case 'conversation_message':
-          addChatBubble(data.message, employeeMap[data.employeeId]?.name);
+          addChatBubble(data.message, data.employeeId, data.leadIdx);
           break;
 
         case 'skill_learned':
@@ -2012,14 +2122,15 @@
 
       await sleep(400);
 
-      // Process leads per employee
-      for (const emp of DEMO_MANAGER.employees) {
+      // Process all employees in PARALLEL
+      // Each employee processes their leads sequentially, but employees run concurrently
+      async function processEmployee(emp) {
         for (const leadIdx of emp.assigned_leads) {
           if (leadIdx >= leads.length) continue;
 
           // Status: researching
           handleSSEEvent('employee_status', {employeeId: emp.id, leadIdx, stage: 'researching company'});
-          await sleep(800);
+          await sleep(800 + Math.random() * 400);
 
           handleSSEEvent('employee_status', {employeeId: emp.id, leadIdx, stage: 'starting conversation'});
           await sleep(400);
@@ -2029,12 +2140,11 @@
           if (conv) {
             for (const msg of conv.messages) {
               handleSSEEvent('conversation_message', {employeeId: emp.id, leadIdx, message: msg});
-              await sleep(600 + Math.random() * 400);
+              await sleep(500 + Math.random() * 500);
             }
 
             // Skills
             for (const skill of conv.objections_handled) {
-              // Check if already learned
               if (!learnedSkills.find(s => s.skill_name === skill.skill_name)) {
                 handleSSEEvent('skill_learned', {employeeId: emp.id, skill});
                 await sleep(300);
@@ -2042,7 +2152,7 @@
                   message: `${emp.name} discovered: "${skill.skill_name}" — sharing with all agents`,
                   skill
                 });
-                await sleep(800);
+                await sleep(600);
               }
             }
 
@@ -2064,6 +2174,9 @@
           await sleep(300);
         }
       }
+
+      // Fire all employees at once — they run their conversations simultaneously
+      await Promise.all(DEMO_MANAGER.employees.map(emp => processEmployee(emp)));
 
       handleSSEEvent('batch_complete', {
         message: `All ${leads.length} leads processed. ${learnedSkills.length} skills learned across the team.`,

@@ -114,78 +114,89 @@ async def run_batch(req: RunBatchRequest):
             yield _sse_event("employee_created", {"employee": emp})
             await asyncio.sleep(0.4)
 
-        # Step 4: Process leads sequentially per employee
-        # (Sequential so the shared learning actually builds up)
+        # Step 4: Process leads in parallel across employees
+        # Use an asyncio.Queue so concurrent workers can push SSE events
+        event_queue: asyncio.Queue = asyncio.Queue()
         results_map: dict[int, dict] = {}
 
-        for emp in employees:
+        async def process_lead(emp, lead_idx):
             emp_id = emp["id"]
             persona = emp.get("persona", "")
-            assigned = emp.get("assigned_leads", [])
+            if lead_idx >= len(leads_raw):
+                return
+            lead = leads_raw[lead_idx]
 
-            for lead_idx in assigned:
-                if lead_idx >= len(leads_raw):
-                    continue
-                lead = leads_raw[lead_idx]
+            await event_queue.put(_sse_event("employee_status", {
+                "employeeId": emp_id,
+                "leadIdx": lead_idx,
+                "stage": "researching company",
+            }))
 
-                # Status: researching
-                yield _sse_event("employee_status", {
-                    "employeeId": emp_id,
-                    "leadIdx": lead_idx,
-                    "stage": "researching company",
-                })
-                await asyncio.sleep(0.1)
-
-                # Run conversation
-                try:
-                    result = await asyncio.to_thread(
-                        run_conversation,
-                        lead, req.repName, req.company, req.productDesc,
-                        persona, skills,
-                    )
-                except Exception as e:
-                    logger.error("Conversation failed for lead %d: %s", lead_idx, e, exc_info=True)
-                    yield _sse_event("employee_status", {
-                        "employeeId": emp_id,
-                        "leadIdx": lead_idx,
-                        "stage": "error",
-                    })
-                    continue
-
-                # Stream conversation messages one by one
-                for msg in result.get("conversation", []):
-                    yield _sse_event("conversation_message", {
-                        "employeeId": emp_id,
-                        "leadIdx": lead_idx,
-                        "message": msg,
-                    })
-                    await asyncio.sleep(0.05)
-
-                # Check for new skills
-                new_skills = extract_new_skills(
-                    result.get("objections_handled", []), skills
+            try:
+                result = await asyncio.to_thread(
+                    run_conversation,
+                    lead, req.repName, req.company, req.productDesc,
+                    persona, list(skills),  # snapshot of skills at call time
                 )
-                for skill in new_skills:
-                    skills.append(skill)
-                    yield _sse_event("skill_learned", {
-                        "employeeId": emp_id,
-                        "skill": skill,
-                    })
-                    await asyncio.sleep(0.1)
-                    yield _sse_event("manager_broadcast", {
-                        "message": f"{emp.get('name', emp_id)} discovered a new technique: {skill.get('skill_name', '')}",
-                        "skill": skill,
-                    })
-                    await asyncio.sleep(0.1)
-
-                # Lead complete
-                results_map[lead_idx] = result
-                yield _sse_event("lead_complete", {
+            except Exception as e:
+                logger.error("Conversation failed for lead %d: %s", lead_idx, e, exc_info=True)
+                await event_queue.put(_sse_event("employee_status", {
                     "employeeId": emp_id,
                     "leadIdx": lead_idx,
-                    "result": result,
-                })
-                await asyncio.sleep(0.1)
+                    "stage": "error",
+                }))
+                return
+
+            # Queue conversation messages
+            for msg in result.get("conversation", []):
+                await event_queue.put(_sse_event("conversation_message", {
+                    "employeeId": emp_id,
+                    "leadIdx": lead_idx,
+                    "message": msg,
+                }))
+
+            # Check for new skills
+            new_skills = extract_new_skills(
+                result.get("objections_handled", []), skills
+            )
+            for skill in new_skills:
+                skills.append(skill)
+                await event_queue.put(_sse_event("skill_learned", {
+                    "employeeId": emp_id,
+                    "skill": skill,
+                }))
+                await event_queue.put(_sse_event("manager_broadcast", {
+                    "message": f"{emp.get('name', emp_id)} discovered a new technique: {skill.get('skill_name', '')}",
+                    "skill": skill,
+                }))
+
+            results_map[lead_idx] = result
+            await event_queue.put(_sse_event("lead_complete", {
+                "employeeId": emp_id,
+                "leadIdx": lead_idx,
+                "result": result,
+            }))
+
+        # Build all tasks — each employee's leads run concurrently
+        all_tasks = []
+        for emp in employees:
+            for lead_idx in emp.get("assigned_leads", []):
+                all_tasks.append(process_lead(emp, lead_idx))
+
+        # Run workers and drain queue concurrently
+        async def run_workers():
+            await asyncio.gather(*all_tasks)
+            await event_queue.put(None)  # sentinel
+
+        worker_task = asyncio.create_task(run_workers())
+
+        while True:
+            event = await event_queue.get()
+            if event is None:
+                break
+            yield event
+
+        await worker_task
 
         # Done
         yield _sse_event("batch_complete", {
