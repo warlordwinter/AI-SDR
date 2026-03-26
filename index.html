@@ -69,6 +69,73 @@
       letter-spacing: .04em;
     }
 
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* ── DEMO MODE TOGGLE ── */
+    .demo-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .demo-toggle-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text4);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .demo-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: transparent;
+      transition: background .2s;
+    }
+
+    .demo-dot.active {
+      background: var(--amber);
+      box-shadow: 0 0 6px var(--amber);
+    }
+
+    .demo-switch {
+      width: 32px;
+      height: 16px;
+      border-radius: 8px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      position: relative;
+      transition: background .2s, border-color .2s;
+    }
+
+    .demo-switch.on {
+      background: var(--amber-bg);
+      border-color: #3a300e;
+    }
+
+    .demo-switch-knob {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--text4);
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: left .2s, background .2s;
+    }
+
+    .demo-switch.on .demo-switch-knob {
+      left: 18px;
+      background: var(--amber);
+    }
+
     /* ─────────────────────────────────────────
        SCREEN 1 — UPLOAD
     ───────────────────────────────────────── */
@@ -626,6 +693,197 @@
     .ra-edit { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
     .ra-skip { background: transparent; color: var(--text4); border: 1px solid var(--border); }
 
+    /* ─────────────────────────────────────────
+       SCREEN 4 — SEQUENCE VIEW
+    ───────────────────────────────────────── */
+    #screen-sequence {
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .seq-body {
+      flex: 1;
+      padding: 28px 32px 32px;
+      overflow-y: auto;
+    }
+
+    .seq-title {
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -.02em;
+      margin-bottom: 4px;
+    }
+
+    .seq-sub {
+      font-size: 13px;
+      color: var(--text3);
+      font-weight: 300;
+      margin-bottom: 24px;
+    }
+
+    .seq-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 14px;
+      animation: fadeSlideIn .35s ease both;
+    }
+
+    .seq-card-header {
+      margin-bottom: 18px;
+    }
+
+    .seq-lead-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .seq-lead-meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text4);
+    }
+
+    .seq-timeline {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      position: relative;
+    }
+
+    .seq-node {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      min-width: 0;
+    }
+
+    .seq-node-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-bottom: 8px;
+      z-index: 1;
+    }
+
+    .seq-node-dot.sent {
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(74, 254, 138, .3);
+    }
+
+    .seq-node-dot.scheduled {
+      background: var(--amber);
+      box-shadow: 0 0 6px rgba(232, 196, 74, .2);
+    }
+
+    .seq-node-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    .seq-node-label.sent { color: var(--green); }
+    .seq-node-label.scheduled { color: var(--amber); }
+
+    .seq-node-status {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text4);
+      margin-bottom: 3px;
+    }
+
+    .seq-node-date {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text4);
+      text-align: center;
+    }
+
+    .seq-connector {
+      position: absolute;
+      top: 5px;
+      left: calc(50% + 8px);
+      right: calc(-50% + 8px);
+      height: 1px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    .seq-node:last-child .seq-connector { display: none; }
+
+    .seq-preview-btn {
+      margin-top: 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 3px 10px;
+      background: var(--bg3);
+      color: var(--text4);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: color .15s;
+    }
+
+    .seq-preview-btn:hover { color: var(--text2); }
+
+    .seq-preview-content {
+      display: none;
+      margin-top: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      text-align: left;
+      max-width: 260px;
+    }
+
+    .seq-preview-content.open { display: block; }
+
+    .topbar-back {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text4);
+      cursor: pointer;
+      text-decoration: none;
+      transition: color .15s;
+      letter-spacing: .04em;
+    }
+
+    .topbar-back:hover { color: var(--text2); }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .view-seq-btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 5px 14px;
+      background: var(--bg3);
+      color: var(--text3);
+      border: 1px solid var(--border2);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: color .15s, border-color .15s;
+      display: none;
+    }
+
+    .view-seq-btn:hover { color: var(--green); border-color: var(--green-bd); }
+
     /* ── ANIMATIONS ── */
     @keyframes fadeSlideIn {
       from { opacity: 0; transform: translateY(6px); }
@@ -661,7 +919,16 @@
   <div id="screen-upload" class="screen active">
     <div class="topbar">
       <div class="logo">SDR//AI</div>
-      <div class="topbar-meta">AUTONOMOUS OUTREACH AGENT</div>
+      <div class="topbar-right">
+        <div class="topbar-meta">AUTONOMOUS OUTREACH AGENT</div>
+        <div class="demo-toggle" onclick="toggleDemoMode()">
+          <span class="demo-dot" id="demo-dot-1"></span>
+          <span class="demo-toggle-label">DEMO MODE</span>
+          <div class="demo-switch" id="demo-switch-1">
+            <div class="demo-switch-knob"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px;">
@@ -709,7 +976,16 @@
   <div id="screen-pipeline" class="screen">
     <div class="topbar">
       <div class="logo">SDR//AI</div>
-      <div class="topbar-meta" id="pipeline-meta">RUN #001</div>
+      <div class="topbar-right">
+        <div class="topbar-meta" id="pipeline-meta">RUN #001</div>
+        <div class="demo-toggle" onclick="toggleDemoMode()">
+          <span class="demo-dot" id="demo-dot-2"></span>
+          <span class="demo-toggle-label">DEMO MODE</span>
+          <div class="demo-switch" id="demo-switch-2">
+            <div class="demo-switch-knob"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="pipeline-body">
@@ -748,8 +1024,20 @@
   ══════════════════════════════════════ -->
   <div id="screen-review" class="screen">
     <div class="topbar">
-      <div class="logo">SDR//AI</div>
-      <div class="topbar-meta" id="review-meta">EMAIL REVIEW</div>
+      <div class="topbar-left">
+        <div class="logo">SDR//AI</div>
+        <div class="topbar-meta" id="review-meta">EMAIL REVIEW</div>
+      </div>
+      <div class="topbar-right">
+        <button class="view-seq-btn" id="view-seq-btn" onclick="goToSequence()">View sequences →</button>
+        <div class="demo-toggle" onclick="toggleDemoMode()">
+          <span class="demo-dot" id="demo-dot-3"></span>
+          <span class="demo-toggle-label">DEMO MODE</span>
+          <div class="demo-switch" id="demo-switch-3">
+            <div class="demo-switch-knob"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="review-layout">
@@ -812,6 +1100,35 @@
   </div>
 
 
+  <!-- ══════════════════════════════════════
+       SCREEN 4 — SEQUENCE VIEW
+  ══════════════════════════════════════ -->
+  <div id="screen-sequence" class="screen">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="logo">SDR//AI</div>
+        <a class="topbar-back" onclick="showScreen('screen-review')">← back to review</a>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-meta">SEQUENCES</div>
+        <div class="demo-toggle" onclick="toggleDemoMode()">
+          <span class="demo-dot" id="demo-dot-4"></span>
+          <span class="demo-toggle-label">DEMO MODE</span>
+          <div class="demo-switch" id="demo-switch-4">
+            <div class="demo-switch-knob"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="seq-body">
+      <p class="seq-title">Follow-up sequences</p>
+      <p class="seq-sub">Automated follow-ups scheduled for sent emails</p>
+      <div id="seq-cards"></div>
+    </div>
+  </div>
+
+
   <script>
     /* ────────────────────────────────────────
        STATE
@@ -820,6 +1137,8 @@
     let results = [];
     let activeLeadIdx = 0;
     let leadCount = 0;
+    let demoMode = false;
+    let sentLeads = new Set();
 
     const PIPELINE_STAGES = [
       'researching company_',
@@ -827,6 +1146,112 @@
       'drafting email_',
       'scoring fit_',
     ];
+
+    /* ────────────────────────────────────────
+       DEMO MODE
+    ──────────────────────────────────────── */
+    const DEMO_RESULTS = {
+      'Lattice HQ': {
+        fitScore: 9,
+        fitReason: 'VP of Sales at high-growth SaaS with 800+ employees — direct budget authority over SDR tooling and active pain around rep productivity at scale.',
+        research: {
+          snapshot: 'Lattice is a people management platform serving over 5,000 companies, offering performance reviews, engagement surveys, and compensation management. They recently crossed $100M ARR and are expanding aggressively into mid-market and enterprise segments.',
+          signal: 'Lattice raised a $175M Series F at a $3B valuation and announced plans to double their sales org headcount by Q3 2026.',
+          painTags: ['SDR ramp time', 'outbound efficiency', 'pipeline generation', 'rep onboarding'],
+          whyFit: 'Doubling their sales team means dozens of new SDRs who need to ramp fast — AI-powered outreach tooling directly addresses their scaling bottleneck.',
+        },
+        email: {
+          subject: 'Lattice is doubling sales headcount — how to ramp reps 3x faster',
+          body: 'Hi Sarah,\n\nCongrats on the Series F and the plan to double your sales org. That\'s an exciting but brutal scaling challenge — every new SDR takes 3-4 months to hit quota.\n\nWe help teams like yours cut that ramp time by automating the research and personalization layer. Your reps focus on conversations instead of LinkedIn tabs.\n\nWould love to show you a live run on your actual lead list. 15 minutes this week?\n\n— Alex Rivera\nAcme Corp',
+        },
+      },
+      'Rippling': {
+        fitScore: 8,
+        fitReason: 'Head of RevOps at a unicorn in hypergrowth — owns the sales tech stack and directly evaluates outbound tooling.',
+        research: {
+          snapshot: 'Rippling is a workforce platform that unifies HR, IT, and finance for businesses. They\'ve grown to over 3,000 employees and serve 10,000+ companies with their all-in-one approach.',
+          signal: 'Rippling closed a $200M round at a $13.5B valuation and opened a new sales hub in Austin, adding 150+ GTM roles.',
+          painTags: ['sales tech consolidation', 'outbound scaling', 'pipeline velocity'],
+          whyFit: 'With 150+ new GTM hires, Rippling needs tooling that gets reps productive from day one without bloating the tech stack.',
+        },
+        email: {
+          subject: 'Scaling 150 GTM hires in Austin — one less tool to worry about',
+          body: 'Hi Marcus,\n\nSaw Rippling is spinning up a major GTM hub in Austin — 150+ roles is a serious investment in outbound.\n\nThe hardest part isn\'t hiring, it\'s getting reps writing quality outreach from week one. We automate the entire research-to-email pipeline so new hires produce senior-level personalization immediately.\n\nWorth a 15-minute look at how it works on your ICP?\n\n— Alex Rivera\nAcme Corp',
+        },
+      },
+      'Loom Inc': {
+        fitScore: 7,
+        fitReason: 'Director of Growth at a product-led company exploring outbound — strong signal of channel expansion into sales-assisted motions.',
+        research: {
+          snapshot: 'Loom is an async video messaging platform used by over 25 million people. Now part of Atlassian, they are expanding beyond PLG into enterprise sales-led motions.',
+          signal: 'Loom launched Loom AI with auto-summaries and CTAs, and posted 5 enterprise AE positions — a clear shift toward outbound sales.',
+          painTags: ['PLG to sales-led transition', 'outbound pipeline', 'enterprise expansion'],
+          whyFit: 'Loom\'s shift from pure PLG to outbound sales means they\'re building an SDR function from scratch — the ideal moment for AI-powered outreach tooling.',
+        },
+        email: {
+          subject: 'Loom\'s enterprise push — building outbound without the overhead',
+          body: 'Hi Priya,\n\nLoom\'s move into enterprise sales-led is a big shift — building an outbound motion from scratch is one of the hardest GTM challenges.\n\nRather than hiring a full SDR team upfront, our AI handles the research and personalization layer so your first reps punch way above their weight.\n\nHappy to show you how it works on your target accounts. 15 minutes?\n\n— Alex Rivera\nAcme Corp',
+        },
+      },
+      'Deel Global': {
+        fitScore: 9,
+        fitReason: 'CRO at a $12B company with aggressive global expansion — ultimate decision-maker for sales tooling with clear pain around scaling outbound across markets.',
+        research: {
+          snapshot: 'Deel is a global payroll and compliance platform operating in 150+ countries, helping companies hire internationally. They\'ve crossed $500M ARR and are one of the fastest-growing SaaS companies globally.',
+          signal: 'Deel acquired Assemble and expanded into compensation benchmarking, while opening new sales offices in Dubai and Singapore.',
+          painTags: ['global outbound scaling', 'multi-market personalization', 'pipeline generation', 'rep efficiency'],
+          whyFit: 'Expanding outbound across Dubai and Singapore markets requires localized, research-heavy personalization at scale — exactly the pain AI SDR tooling solves.',
+        },
+        email: {
+          subject: 'Scaling Deel\'s outbound across Dubai and Singapore',
+          body: 'Hi James,\n\nDeel opening sales in Dubai and Singapore is a bold move — outbound in new markets requires deep localized research that eats SDR bandwidth alive.\n\nWe automate that entire research layer so your reps in each region send hyper-relevant emails from day one, no market expertise required.\n\nWorth 15 minutes to see a live demo on your target accounts?\n\n— Alex Rivera\nAcme Corp',
+        },
+      },
+      'Notion HQ': {
+        fitScore: 7,
+        fitReason: 'Sales Ops Manager at a high-profile PLG company shifting to enterprise — influences tooling decisions and owns sales process optimization.',
+        research: {
+          snapshot: 'Notion is an all-in-one workspace for notes, docs, and project management used by millions. They\'ve been aggressively expanding their enterprise offering and recently launched Notion AI across all plans.',
+          signal: 'Notion launched a dedicated enterprise sales team and reported 3x growth in enterprise contracts, hiring 40+ account executives.',
+          painTags: ['enterprise sales scaling', 'outbound efficiency', 'sales process optimization'],
+          whyFit: 'With 40+ new AEs and a nascent outbound motion, Notion\'s sales ops team needs tooling that drives consistent, high-quality outreach without manual process overhead.',
+        },
+        email: {
+          subject: '40 new AEs at Notion — keeping outreach quality high at scale',
+          body: 'Hi Elena,\n\nNotion\'s enterprise push is exciting — 3x growth in enterprise contracts means your 40 new AEs need to produce quality outreach from the jump.\n\nWe help sales ops teams like yours standardize personalization at scale. Every email is researched and tailored automatically, so quality doesn\'t drop as the team grows.\n\nCan I show you a quick demo? 15 minutes.\n\n— Alex Rivera\nAcme Corp',
+        },
+      },
+    };
+
+    function getDemoResult(lead, repName, company) {
+      if (DEMO_RESULTS[lead.company]) {
+        const r = JSON.parse(JSON.stringify(DEMO_RESULTS[lead.company]));
+        // Replace rep name and company in email body if user customized them
+        if (repName && repName !== 'Alex Rivera') {
+          r.email.body = r.email.body.replace('Alex Rivera', repName);
+        }
+        if (company && company !== 'Acme Corp') {
+          r.email.body = r.email.body.replace('Acme Corp', company);
+        }
+        return r;
+      }
+      // Fallback for unknown companies
+      return mockResult(lead, repName, company);
+    }
+
+    function toggleDemoMode() {
+      demoMode = !demoMode;
+      syncDemoToggles();
+    }
+
+    function syncDemoToggles() {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById(`demo-dot-${i}`);
+        const sw = document.getElementById(`demo-switch-${i}`);
+        if (dot) dot.classList.toggle('active', demoMode);
+        if (sw) sw.classList.toggle('on', demoMode);
+      }
+    }
 
     /* ────────────────────────────────────────
        SCREEN NAVIGATION
@@ -897,6 +1322,7 @@
     function startPipeline() {
       if (!leads.length) return;
       showScreen('screen-pipeline');
+      sentLeads = new Set();
 
       const repName    = document.getElementById('rep-name').value    || 'Your Rep';
       const company    = document.getElementById('company').value     || 'Your Company';
@@ -952,16 +1378,20 @@
         for (const stage of PIPELINE_STAGES) {
           stxt.className = 'status-text st-active';
           stxt.textContent = stage;
-          await sleep(500 + Math.random() * 600);
+          await sleep(demoMode ? 300 + Math.random() * 200 : 500 + Math.random() * 600);
         }
 
         // ── API CALL ──────────────────────────────
         let result;
-        try {
-          result = await callAgentAPI(lead, repName, company, productDesc);
-        } catch (err) {
-          // Fallback mock so demo never breaks
-          result = mockResult(lead, repName, company);
+        if (demoMode) {
+          result = getDemoResult(lead, repName, company);
+        } else {
+          try {
+            result = await callAgentAPI(lead, repName, company, productDesc);
+          } catch (err) {
+            // Fallback mock so demo never breaks
+            result = mockResult(lead, repName, company);
+          }
         }
 
         results[i] = result;
@@ -1103,6 +1533,7 @@ ${company}`,
         `;
         list.appendChild(item);
       });
+      updateSeqButton();
     }
 
     function selectLead(idx) {
@@ -1155,12 +1586,19 @@ ${company}`,
           .replace(/^(Hi \w+,)/m, '<span class="name">$1</span>')
           .replace(new RegExp(`(— ${escapeRegex(document.getElementById('rep-name').value || 'Your Rep')})`, 'g'), '<span class="name">$1</span>');
 
-      // Reset send button
+      // Reset send button based on sent state
       const sendBtn = document.getElementById('rv-send-btn');
-      sendBtn.textContent = 'Send email';
-      sendBtn.disabled = false;
-      sendBtn.style.background = 'var(--green)';
-      sendBtn.style.color = '#071409';
+      if (sentLeads.has(idx)) {
+        sendBtn.textContent = '✓ Sent';
+        sendBtn.style.background = 'var(--green-bg)';
+        sendBtn.style.color = 'var(--green)';
+        sendBtn.disabled = true;
+      } else {
+        sendBtn.textContent = 'Send email';
+        sendBtn.disabled = false;
+        sendBtn.style.background = 'var(--green)';
+        sendBtn.style.color = '#071409';
+      }
     }
 
     function markSent() {
@@ -1170,11 +1608,23 @@ ${company}`,
       btn.style.color = 'var(--green)';
       btn.disabled = true;
 
+      sentLeads.add(activeLeadIdx);
+      updateSeqButton();
+
       // Auto-advance to next unsent lead
       setTimeout(() => {
         const next = activeLeadIdx + 1;
         if (next < leads.length) selectLead(next);
       }, 800);
+    }
+
+    function updateSeqButton() {
+      const btn = document.getElementById('view-seq-btn');
+      if (sentLeads.size > 0) {
+        btn.style.display = 'inline-block';
+      } else {
+        btn.style.display = 'none';
+      }
     }
 
     function skipLead() {
@@ -1188,6 +1638,108 @@ ${company}`,
       const btn = document.querySelector('.copy-btn');
       btn.textContent = 'copied';
       setTimeout(() => btn.textContent = 'copy', 1500);
+    }
+
+    /* ────────────────────────────────────────
+       SCREEN 4 — SEQUENCE VIEW
+    ──────────────────────────────────────── */
+    const FOLLOWUP_TEMPLATES = [
+      {
+        label: 'Follow-up',
+        dayOffset: 3,
+        getPreview: (lead, repName) =>
+`Hi ${lead.name.split(' ')[0]},
+
+Wanted to bump this to the top of your inbox. I know ${lead.company} is moving fast right now — happy to keep this to a tight 15 minutes.
+
+Any time this week work?
+
+— ${repName}`,
+      },
+      {
+        label: 'Follow-up 2',
+        dayOffset: 7,
+        getPreview: (lead, repName) =>
+`Hi ${lead.name.split(' ')[0]},
+
+Last note from me — I put together a 2-min walkthrough specific to ${lead.company}'s use case. Happy to share if there's any interest.
+
+Either way, no hard feelings. Wishing you and the team a strong quarter.
+
+— ${repName}`,
+      },
+    ];
+
+    function formatDate(date) {
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function goToSequence() {
+      const container = document.getElementById('seq-cards');
+      container.innerHTML = '';
+      const repName = document.getElementById('rep-name').value || 'Your Rep';
+      const today = new Date();
+
+      let cardIdx = 0;
+      leads.forEach((lead, i) => {
+        if (!sentLeads.has(i)) return;
+
+        const card = document.createElement('div');
+        card.className = 'seq-card';
+        card.style.animationDelay = (cardIdx * 80) + 'ms';
+        cardIdx++;
+
+        let nodesHTML = '';
+
+        // Node 1 — Sent email
+        nodesHTML += `
+          <div class="seq-node">
+            <div class="seq-connector"></div>
+            <div class="seq-node-dot sent"></div>
+            <div class="seq-node-label sent">Email 1</div>
+            <div class="seq-node-status">Sent</div>
+            <div class="seq-node-date">${formatDate(today)}</div>
+          </div>
+        `;
+
+        // Follow-up nodes
+        FOLLOWUP_TEMPLATES.forEach((tmpl, fi) => {
+          const futureDate = new Date(today);
+          futureDate.setDate(futureDate.getDate() + tmpl.dayOffset);
+          const previewId = `preview-${i}-${fi}`;
+
+          nodesHTML += `
+            <div class="seq-node">
+              ${fi < FOLLOWUP_TEMPLATES.length - 1 ? '<div class="seq-connector"></div>' : ''}
+              <div class="seq-node-dot scheduled"></div>
+              <div class="seq-node-label scheduled">${tmpl.label}</div>
+              <div class="seq-node-status">Scheduled</div>
+              <div class="seq-node-date">Day ${tmpl.dayOffset} — ${formatDate(futureDate)}</div>
+              <button class="seq-preview-btn" onclick="togglePreview('${previewId}')">Preview</button>
+              <div class="seq-preview-content" id="${previewId}">${tmpl.getPreview(lead, repName)}</div>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="seq-card-header">
+            <div class="seq-lead-name">${lead.name}</div>
+            <div class="seq-lead-meta">${lead.title} · ${lead.company}</div>
+          </div>
+          <div class="seq-timeline">
+            ${nodesHTML}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      showScreen('screen-sequence');
+    }
+
+    function togglePreview(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('open');
     }
 
     /* ────────────────────────────────────────
