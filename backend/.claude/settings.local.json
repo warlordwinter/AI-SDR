@@ -3,7 +3,9 @@
     "allow": [
       "Bash(find /c/Users/18019/OneDrive/Desktop/hackathon/AI-SDR -type f -name *test* -o -name *spec*)",
       "WebFetch(domain:github.com)",
-      "Bash(find /c/Users/18019/OneDrive/Desktop/hackathon/AI-SDR -type f \\\\\\(-name *.html -o -name *.js -o -name *.jsx -o -name *.tsx -o -name *.ts \\\\\\))"
+      "Bash(find /c/Users/18019/OneDrive/Desktop/hackathon/AI-SDR -type f \\\\\\(-name *.html -o -name *.js -o -name *.jsx -o -name *.tsx -o -name *.ts \\\\\\))",
+      "Bash(python:*)",
+      "Bash(python -c \":*)"
     ]
   }
 }
