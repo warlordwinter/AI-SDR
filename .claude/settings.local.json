@@ -3,7 +3,9 @@
     "allow": [
       "Bash(python:*)",
       "Bash(mkdir -p \"/c/Users/18019/.claude/plans\")",
-      "Read(//c/Users/18019/.claude/plans//**)"
+      "Read(//c/Users/18019/.claude/plans//**)",
+      "Bash(find /c/Users/18019/OneDrive/Desktop/hackathon/AI-SDR -type f \\\\\\(-name *.json -o -name *.yaml -o -name *.yml -o -name config* -o -name *.env* \\\\\\))",
+      "Bash(find . -type f -name \"*.py\" -exec wc -l {} +)"
     ]
   }
 }

@@ -6,6 +6,7 @@ from prompts import (
     MANAGER_SYSTEM_PROMPT,
     CONVERSATION_SYSTEM_PROMPT,
     RESEARCH_SYSTEM_PROMPT,
+    SKILL_REVIEW_SYSTEM_PROMPT,
 )
 
 logger = logging.getLogger("sdr-manager")
@@ -253,3 +254,50 @@ def extract_new_skills(
         o for o in objections_handled
         if o.get("skill_name", "").lower() not in existing_names
     ]
+
+
+def review_skill(
+    skill: dict,
+    conversation_messages: list[dict],
+    outcome: str,
+    existing_skills: list[dict],
+) -> dict:
+    """Johnny reviews a discovered skill using Claude to evaluate its quality."""
+    try:
+        # Format existing skills as compact list
+        if existing_skills:
+            skills_text = "\n".join(
+                f"- {s.get('skill_name', '?')}: {s.get('strategy', '?')}"
+                for s in existing_skills if not s.get("rejected")
+            )
+        else:
+            skills_text = "(none yet)"
+
+        # Format conversation as compact transcript
+        transcript = "\n".join(
+            f"{m.get('role', '?').upper()}: \"{m.get('text', '')}\""
+            for m in conversation_messages
+        )
+
+        prompt = SKILL_REVIEW_SYSTEM_PROMPT.format(existing_skills=skills_text)
+        user_content = (
+            f"SKILL DISCOVERED:\n"
+            f"Name: {skill.get('skill_name', '?')}\n"
+            f"Strategy: {skill.get('strategy', '?')}\n"
+            f"Objection type: {skill.get('objection_type', 'unknown')}\n\n"
+            f"CONVERSATION WHERE IT WAS USED:\n{transcript}\n\n"
+            f"Outcome: {outcome}"
+        )
+
+        result = _call_claude(
+            system_prompt=prompt,
+            user_content=user_content,
+            max_tokens=256,
+        )
+        return {
+            "approved": result.get("approved", True),
+            "reason": result.get("reason", "Reviewed."),
+        }
+    except Exception as e:
+        logger.warning("Skill review failed: %s — auto-approving", e)
+        return {"approved": True, "reason": "Approved (review unavailable)."}

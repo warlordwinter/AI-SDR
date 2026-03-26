@@ -23,7 +23,7 @@ from pydantic import BaseModel
 from starlette.responses import StreamingResponse
 
 from agent import run_pipeline
-from manager import analyze_and_delegate, run_conversation, extract_new_skills
+from manager import analyze_and_delegate, run_conversation, extract_new_skills, review_skill
 import knowledge
 
 # ── Logging ──
@@ -66,21 +66,6 @@ class RunBatchRequest(BaseModel):
 def _sse_event(event: str, data: dict) -> str:
     return f"event: {event}\ndata: {json.dumps(data)}\n\n"
 
-
-JOHNNY_APPROVAL_MESSAGES = [
-    "Excellent find — deploying this to the whole team now.",
-    "This is exactly the edge we need. Teaching it to everyone.",
-    "Smart technique. I'm making this standard practice.",
-    "Good instinct. Sharing this with the rest of the squad.",
-    "I like this approach. Rolling it out team-wide.",
-]
-
-JOHNNY_REJECTION_MESSAGES = [
-    "Too situational — this won't generalize across our leads.",
-    "We already have a stronger version of this. Passing.",
-    "Interesting idea, but too aggressive for our brand voice.",
-    "Not enough signal here. Let's wait for more data before teaching this.",
-]
 
 
 # ── Endpoints ──
@@ -139,7 +124,6 @@ async def run_batch(req: RunBatchRequest):
         # Use an asyncio.Queue so concurrent workers can push SSE events
         event_queue: asyncio.Queue = asyncio.Queue()
         results_map: dict[int, dict] = {}
-        skill_review_counter = 0
 
         async def process_lead(emp, lead_idx):
             emp_id = emp["id"]
@@ -211,7 +195,6 @@ async def run_batch(req: RunBatchRequest):
             # Collect other employee names for teaching event
             other_employees = [e for e in employees if e["id"] != emp_id]
 
-            nonlocal skill_review_counter
             for skill in new_skills:
                 skill_name = skill.get("skill_name", "")
                 emp_name = emp.get("name", emp_id)
@@ -222,22 +205,24 @@ async def run_batch(req: RunBatchRequest):
                     "skill": skill,
                 }))
 
-                # Johnny reviews the skill
+                # Johnny reviews the skill (real Claude-based review)
                 await event_queue.put(_sse_event("manager_reviewing_skill", {
                     "employeeId": emp_id,
                     "employeeName": emp_name,
                     "skill": skill,
                 }))
-                await asyncio.sleep(0.8)
 
-                # Approve/reject: every 3rd skill gets rejected
-                skill_review_counter += 1
-                rejected = skill_review_counter % 3 == 0
+                review_result = await asyncio.to_thread(
+                    review_skill,
+                    skill,
+                    result.get("conversation", []),
+                    result.get("outcome", "follow_up"),
+                    list(skills),
+                )
+                rejected = not review_result.get("approved", True)
+                johnny_message = review_result.get("reason", "Reviewed.")
 
                 if rejected:
-                    reason = JOHNNY_REJECTION_MESSAGES[
-                        skill_review_counter % len(JOHNNY_REJECTION_MESSAGES)
-                    ]
                     # Still track so it doesn't get re-discovered
                     skill["rejected"] = True
                     skills.append(skill)
@@ -246,25 +231,22 @@ async def run_batch(req: RunBatchRequest):
                         "employeeId": emp_id,
                         "employeeName": emp_name,
                         "skill": skill,
-                        "reason": reason,
+                        "reason": johnny_message,
                     }))
 
                     evt_reject = knowledge.add_timeline_event(
                         event_type="skill_rejected",
                         agent_name="Johnny",
                         lead_name=lead.get("name", ""),
-                        detail=f"Rejected '{skill_name}' from {emp_name} — {reason}",
+                        detail=f"Rejected '{skill_name}' from {emp_name} — {johnny_message}",
                     )
                     await event_queue.put(_sse_event("timeline_event", {"event": evt_reject}))
 
                     await event_queue.put(_sse_event("manager_broadcast", {
-                        "message": f"Johnny reviewed '{skill_name}' from {emp_name} but decided to pass — {reason}",
+                        "message": f"Johnny reviewed '{skill_name}' from {emp_name} but decided to pass — {johnny_message}",
                         "skill": skill,
                     }))
                 else:
-                    approval_msg = JOHNNY_APPROVAL_MESSAGES[
-                        skill_review_counter % len(JOHNNY_APPROVAL_MESSAGES)
-                    ]
                     skills.append(skill)
                     # Persist to cross-batch knowledge base
                     kb_entry = knowledge.add_skill(
@@ -279,7 +261,7 @@ async def run_batch(req: RunBatchRequest):
                         "employeeId": emp_id,
                         "employeeName": emp_name,
                         "skill": skill,
-                        "approvalMessage": approval_msg,
+                        "approvalMessage": johnny_message,
                     }))
 
                     # Timeline: skill extracted & approved
@@ -287,7 +269,7 @@ async def run_batch(req: RunBatchRequest):
                         event_type="skill_extracted",
                         agent_name="Johnny",
                         lead_name=lead.get("name", ""),
-                        detail=f"Approved '{skill_name}' from {emp_name} — {approval_msg}",
+                        detail=f"Approved '{skill_name}' from {emp_name} — {johnny_message}",
                         related_skill_id=kb_entry["id"],
                     )
                     await event_queue.put(_sse_event("timeline_event", {"event": evt_skill}))
