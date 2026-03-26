@@ -692,6 +692,165 @@
     .ra-send { background: var(--green); color: #071409; }
     .ra-edit { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
     .ra-skip { background: transparent; color: var(--text4); border: 1px solid var(--border); }
+    .ra-send-all { background: var(--amber); color: #1a1400; }
+    .ra-analytics { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); margin-left: auto; }
+
+    /* Edit mode inputs */
+    .email-subj-edit {
+      flex: 1;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--bg3);
+      border: 1px solid var(--green);
+      border-radius: 5px;
+      padding: 6px 10px;
+      outline: none;
+    }
+    .email-body-edit {
+      display: none;
+      width: 100%;
+      min-height: 180px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text2);
+      background: var(--bg3);
+      border: 1px solid var(--green);
+      border-radius: 6px;
+      padding: 14px 16px;
+      line-height: 1.85;
+      resize: vertical;
+      outline: none;
+    }
+
+    /* Analytics screen */
+    #screen-analytics {
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .analytics-body {
+      flex: 1;
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .analytics-title {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .analytics-sub {
+      color: var(--text3);
+      font-size: 13px;
+      margin-bottom: 32px;
+    }
+    .stats-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      flex: 1;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 36px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .stat-num.green { color: var(--green); }
+    .stat-num.amber { color: var(--amber); }
+    .stat-num.red { color: var(--red); }
+    .stat-num.default { color: var(--text); }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .funnel-section {
+      margin-bottom: 32px;
+    }
+    .funnel-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text4);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 14px;
+    }
+    .funnel-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .funnel-bar-label {
+      font-size: 12px;
+      color: var(--text2);
+      width: 90px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .funnel-bar-track {
+      flex: 1;
+      height: 28px;
+      background: var(--bg3);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .funnel-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width .5s ease;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #071409;
+      font-weight: 500;
+    }
+    .funnel-bar-fill.green { background: var(--green); }
+    .funnel-bar-fill.amber { background: var(--amber); }
+    .funnel-bar-fill.red { background: var(--red); color: #fff; }
+    .lead-table-analytics {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .lead-table-analytics th {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text4);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lead-table-analytics td {
+      font-size: 12px;
+      color: var(--text2);
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .status-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .status-badge.sent { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+    .status-badge.pending { background: var(--amber-bg); color: var(--amber); border: 1px solid #3a3020; }
+    .status-badge.skipped { background: var(--bg3); color: var(--text4); border: 1px solid var(--border2); }
 
     /* ─────────────────────────────────────────
        SCREEN 4 — SEQUENCE VIEW
@@ -1369,10 +1528,12 @@
             <div class="email-subject-row">
               <span class="email-subj-lbl">Subject</span>
               <span class="email-subj-val" id="rv-subject">—</span>
+              <input class="email-subj-edit" id="rv-subject-edit" style="display:none" />
             </div>
             <div class="email-body-wrap" id="rv-body">
               <button class="copy-btn" onclick="copyEmail()">copy</button>
               <span id="rv-body-text">—</span>
+              <textarea class="email-body-edit" id="rv-body-edit" style="display:none"></textarea>
             </div>
           </div>
 
@@ -1380,7 +1541,8 @@
 
         <div class="review-actions">
           <button class="ra-btn ra-send" id="rv-send-btn" onclick="markSent()">Send email</button>
-          <button class="ra-btn ra-edit">Edit draft</button>
+          <button class="ra-btn ra-edit" id="rv-edit-btn" onclick="toggleEditMode()">Edit draft</button>
+          <button class="ra-btn ra-send-all" id="rv-send-all-btn" onclick="sendAllEmails()" style="display:none">Send all</button>
           <button class="ra-btn ra-skip" onclick="skipLead()">Skip lead</button>
         </div>
       </div>
@@ -1414,6 +1576,50 @@
       <p class="seq-title">Follow-up sequences</p>
       <p class="seq-sub">Automated follow-ups scheduled for sent emails</p>
       <div id="seq-cards"></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       SCREEN 6 — ANALYTICS DASHBOARD
+  ══════════════════════════════════════ -->
+  <div id="screen-analytics" class="screen">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="logo">SDR//AI</div>
+        <a class="topbar-back" onclick="showScreen('screen-review')">← back to review</a>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-meta">ANALYTICS</div>
+      </div>
+    </div>
+
+    <div class="analytics-body">
+      <p class="analytics-title">Outreach analytics</p>
+      <p class="analytics-sub">Real-time overview of your email campaign</p>
+
+      <div class="stats-row" id="analytics-stats"></div>
+
+      <div class="funnel-section">
+        <div class="funnel-title">Conversion funnel</div>
+        <div id="analytics-funnel"></div>
+      </div>
+
+      <div class="funnel-section">
+        <div class="funnel-title">Lead breakdown</div>
+        <table class="lead-table-analytics">
+          <thead>
+            <tr>
+              <th>Contact</th>
+              <th>Company</th>
+              <th>Fit</th>
+              <th>Status</th>
+              <th>Subject</th>
+            </tr>
+          </thead>
+          <tbody id="analytics-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -1494,6 +1700,7 @@
     let leadCount = 0;
     let demoMode = false;
     let sentLeads = new Set();
+    let smtpConfigured = false;
 
     const PIPELINE_STAGES = [
       'researching company_',
@@ -1615,6 +1822,12 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
+
+    // Check if SMTP is configured on load
+    fetch('http://localhost:8000/email-config')
+      .then(r => r.json())
+      .then(data => { smtpConfigured = data.configured; })
+      .catch(() => { smtpConfigured = false; });
 
     /* ────────────────────────────────────────
        SCREEN 1 — FILE HANDLING
@@ -2267,8 +2480,6 @@ ${company}`,
     }
 
     function selectLead(idx) {
-      activeLeadIdx = idx;
-
       // Sidebar highlight
       document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
       const si = document.getElementById(`si-${idx}`);
@@ -2278,6 +2489,8 @@ ${company}`,
       const result = results[idx];
 
       if (!lead || !result) return;
+
+      activeLeadIdx = idx;
 
       const firstName = lead.name.split(' ')[0];
       const initials  = lead.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
@@ -2324,15 +2537,50 @@ ${company}`,
         sendBtn.style.color = 'var(--green)';
         sendBtn.disabled = true;
       } else {
-        sendBtn.textContent = 'Send email';
+        sendBtn.textContent = smtpConfigured && !demoMode ? 'Send email' : 'Mark sent';
         sendBtn.disabled = false;
         sendBtn.style.background = 'var(--green)';
         sendBtn.style.color = '#071409';
       }
     }
 
-    function markSent() {
+    async function markSent() {
       const btn = document.getElementById('rv-send-btn');
+      const lead = leads[activeLeadIdx];
+      const result = results[activeLeadIdx];
+
+      if (!lead || !result?.email) return;
+
+      // If SMTP is configured, actually send the email
+      if (smtpConfigured && !demoMode) {
+        btn.textContent = 'Sending…';
+        btn.disabled = true;
+        btn.style.background = '#555';
+        btn.style.color = '#ccc';
+
+        try {
+          const resp = await fetch('http://localhost:8000/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: lead.email,
+              subject: result.email.subject,
+              body: result.email.body,
+              repName: document.getElementById('rep-name').value || 'Your Rep',
+            }),
+          });
+          const data = await resp.json();
+          if (!resp.ok) throw new Error(data.detail || data.error || 'Send failed');
+        } catch (err) {
+          btn.textContent = 'Send failed — retry';
+          btn.disabled = false;
+          btn.style.background = '#c0392b';
+          btn.style.color = '#fff';
+          console.error('Email send error:', err);
+          return;
+        }
+      }
+
       btn.textContent = '✓ Sent';
       btn.style.background = 'var(--green-bg)';
       btn.style.color = 'var(--green)';
@@ -2341,9 +2589,10 @@ ${company}`,
       sentLeads.add(activeLeadIdx);
       updateSeqButton();
 
-      // Auto-advance to next unsent lead
+      // Auto-advance to next unsent lead that has results
       setTimeout(() => {
-        const next = activeLeadIdx + 1;
+        let next = activeLeadIdx + 1;
+        while (next < leads.length && !results[next]) next++;
         if (next < leads.length) selectLead(next);
       }, 800);
     }

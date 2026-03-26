@@ -8,7 +8,11 @@
 import asyncio
 import json
 import logging
+import os
+import smtplib
 import time
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 from dotenv import load_dotenv
 
@@ -57,6 +61,13 @@ class RunBatchRequest(BaseModel):
     repName: str
     company: str
     productDesc: str
+
+
+class SendEmailRequest(BaseModel):
+    to: str
+    subject: str
+    body: str
+    repName: str
 
 
 # ── Helpers ──
@@ -210,3 +221,55 @@ async def run_batch(req: RunBatchRequest):
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+@app.get("/email-config")
+async def email_config():
+    """Check whether SMTP is configured so the frontend can adapt."""
+    configured = bool(os.getenv("SMTP_USER") and os.getenv("SMTP_PASS"))
+    return {"configured": configured, "from_email": os.getenv("SMTP_USER", "")}
+
+
+@app.post("/send-email")
+async def send_email(req: SendEmailRequest):
+    smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
+    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+    smtp_user = os.getenv("SMTP_USER")
+    smtp_pass = os.getenv("SMTP_PASS")
+
+    if not smtp_user or not smtp_pass:
+        return JSONResponse(
+            status_code=400,
+            content={"error": "SMTP not configured. Set SMTP_USER and SMTP_PASS in .env"},
+        )
+
+    msg = MIMEMultipart("alternative")
+    msg["From"] = f"{req.repName} <{smtp_user}>"
+    msg["To"] = req.to
+    msg["Subject"] = req.subject
+
+    # Plain text version
+    msg.attach(MIMEText(req.body, "plain"))
+
+    # Simple HTML version (preserves line breaks)
+    html_body = req.body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br>")
+    html = f"<html><body><p style='font-family:sans-serif;font-size:14px;color:#222'>{html_body}</p></body></html>"
+    msg.attach(MIMEText(html, "html"))
+
+    try:
+        await asyncio.to_thread(_smtp_send, smtp_host, smtp_port, smtp_user, smtp_pass, msg)
+        logging.getLogger("sdr-email").info("Email sent to %s — %s", req.to, req.subject)
+        return {"status": "sent", "to": req.to}
+    except Exception as e:
+        logging.getLogger("sdr-email").error("Send failed: %s", e, exc_info=True)
+        return JSONResponse(
+            status_code=500,
+            content={"error": "Failed to send email", "detail": str(e)},
+        )
+
+
+def _smtp_send(host, port, user, password, msg):
+    with smtplib.SMTP(host, port) as server:
+        server.starttls()
+        server.login(user, password)
+        server.send_message(msg)
