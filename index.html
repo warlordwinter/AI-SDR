@@ -1363,6 +1363,26 @@
           whyFit: 'With 40+ new AEs and a nascent outbound motion, Notion\'s sales ops team needs tooling that drives consistent, high-quality outreach without manual process overhead.',
         },
       },
+      'HubSpot': {
+        fitScore: 8,
+        fitReason: 'VP of Business Development at a market-leading CRM company — owns partner and outbound strategy with deep understanding of sales tooling.',
+        research: {
+          snapshot: 'HubSpot is a leading CRM and inbound marketing platform serving over 200,000 customers globally. They\'ve been expanding aggressively into the enterprise segment and launching AI-powered features across their suite.',
+          signal: 'HubSpot launched a new outbound prospecting hub and announced a 40% increase in their enterprise sales team, targeting upmarket expansion.',
+          painTags: ['outbound scaling', 'enterprise expansion', 'partner channel development', 'rep productivity'],
+          whyFit: 'HubSpot\'s upmarket push means their own BDR team needs the same AI-powered outbound tools they preach to customers — a credibility play and a productivity win.',
+        },
+      },
+      'Figma': {
+        fitScore: 8,
+        fitReason: 'Head of Sales Enablement at a design-led company scaling enterprise sales — directly owns rep training, tooling, and productivity.',
+        research: {
+          snapshot: 'Figma is the leading collaborative design platform used by millions of designers and product teams. Post-independence from the Adobe deal, they\'ve doubled down on enterprise sales and expanded into AI-powered design features.',
+          signal: 'Figma launched FigJam AI and Dev Mode, and posted 30+ enterprise sales roles — signaling a major push into outbound-driven enterprise deals.',
+          painTags: ['sales enablement', 'rep onboarding', 'outbound personalization', 'enterprise pipeline'],
+          whyFit: 'With 30+ new enterprise reps ramping, Figma\'s enablement team needs tooling that accelerates onboarding and ensures personalized outreach quality at scale.',
+        },
+      },
     };
 
     function getDemoResult(lead, repName, company) {
@@ -1454,7 +1474,8 @@
        COMMAND CENTER STATE
     ──────────────────────────────────────── */
     let employeeMap = {};   // id -> employee data
-    let learnedSkills = []; // accumulated skills
+    let learnedSkills = []; // accumulated approved skills
+    let rejectedSkills = []; // rejected skills (tracked for dedup only)
     let completedLeads = 0;
 
     const PERSON_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0112 0v1"/></svg>`;
@@ -1467,6 +1488,7 @@
       showScreen('screen-command');
       employeeMap = {};
       learnedSkills = [];
+      rejectedSkills = [];
       completedLeads = 0;
 
       const repName    = 'Alex Rivera';
@@ -1927,7 +1949,7 @@
           document.getElementById('mgr-strategy').textContent = `Rejected: ${data.reason}`;
           addFeedItem(`Johnny rejected "${data.skill.skill_name}" from ${data.employeeName} — ${data.reason}`, 'feed-red');
           // Track rejected skill so it doesn't get re-discovered by another employee
-          learnedSkills.push(data.skill);
+          rejectedSkills.push(data.skill);
           break;
         }
 
@@ -1974,19 +1996,25 @@
        DEMO MODE — SIMULATED BATCH
     ──────────────────────────────────────── */
     const DEMO_MANAGER = {
-      strategy: "Split the team by company stage — enterprise accounts need a consultative approach while high-growth startups respond better to urgency and ROI framing. Assigning specialists accordingly.",
+      strategy: "Three-way split by company stage — enterprise accounts get a consultative specialist, growth-stage startups get an agility-focused rep, and established companies expanding outbound get a relationship builder. Each rep plays to their strength.",
       employees: [
         {
           id: "sdr-1", name: "Maya Chen", specialization: "Enterprise Account Specialist",
           persona: "Consultative, ROI-focused, references industry benchmarks",
-          assigned_leads: [0, 1, 3],
+          assigned_leads: [0, 1],
           rationale: "VP+ titles at large companies — need senior-level consultative approach"
         },
         {
           id: "sdr-2", name: "Jordan Park", specialization: "Growth-Stage Startup Expert",
           persona: "Energetic, founder-friendly, emphasizes speed to value",
-          assigned_leads: [2, 4],
+          assigned_leads: [2, 3],
           rationale: "Growth-stage companies exploring new motions — respond to agility messaging"
+        },
+        {
+          id: "sdr-3", name: "Alex Rivera", specialization: "Mid-Market Relationship Builder",
+          persona: "Empathetic, relationship-driven, focuses on long-term partnership value",
+          assigned_leads: [4, 5, 6],
+          rationale: "Established companies expanding sales — need a trust-first, consultative approach"
         }
       ]
     };
@@ -2072,24 +2100,60 @@
           skill_name: "Research-First Differentiation"
         }],
       },
+      5: { // HubSpot
+        messages: [
+          {role: "sdr", text: "Hi Rachel, saw HubSpot is doubling down on enterprise outbound — 40% more reps is a big commitment. How are you thinking about keeping outreach quality high as the team scales?"},
+          {role: "client", text: "That's the million-dollar question. We're a CRM company — our reps should be the best at outbound. But honestly, even our team struggles with personalization at scale."},
+          {role: "sdr", text: "That's actually more common than you'd think. The cobbler's children, right? What we've seen is that even great sales orgs hit a ceiling when research is manual."},
+          {role: "client", text: "Maybe, but we already have our own AI features in HubSpot. Why would we need an external tool on top of that?", is_conflict: true, conflict_id: "Complement-Not-Compete Positioning"},
+          {role: "sdr", text: "Great question — we're not replacing HubSpot, we're supercharging it. Think of it like this: HubSpot is your system of record, we're the research and personalization engine that feeds it better inputs. Your reps still live in HubSpot, they just start every conversation with deeper context.", is_conflict: true, conflict_id: "Complement-Not-Compete Positioning", sdr_reasoning: "When selling to a company that has competing features, don't argue superiority — position as a complementary layer. Acknowledge their platform's strength and show how you make it better, not replace it."},
+          {role: "client", text: "Hmm, that framing makes sense. We've been looking for ways to make the CRM data more actionable."},
+          {role: "sdr", text: "Exactly. Want me to show you a quick demo using your own target accounts? You'll see how it plugs into your existing HubSpot workflow."},
+          {role: "client", text: "Sure, let's do it. How about next Tuesday?"},
+        ],
+        outcome: "meeting_booked",
+        objections_handled: [{
+          objection: "Already have internal AI features — why add an external tool?",
+          strategy: "Position as a complementary layer that supercharges their existing platform rather than competing with it",
+          skill_name: "Complement-Not-Compete Positioning"
+        }],
+      },
+      6: { // Figma
+        messages: [
+          {role: "sdr", text: "Hi Alex, saw Figma is hiring 30+ enterprise reps — that's a serious outbound investment. How's the enablement team keeping up with onboarding at that pace?"},
+          {role: "client", text: "Barely, if I'm honest. We have great training content but the ramp time is still 3-4 months before reps are fully productive."},
+          {role: "sdr", text: "That's pretty standard but painful at your growth rate. What if you could cut that ramp to 4-6 weeks by giving new reps AI-powered research from day one?"},
+          {role: "client", text: "We've tried giving reps more tools before and it actually slowed them down. More tabs, more context switching, more cognitive load.", is_conflict: true, conflict_id: "Cognitive Load Reducer"},
+          {role: "sdr", text: "That's a really smart observation — and exactly why we built it differently. Instead of adding another tab, we reduce the number of steps. Your reps currently do research across 5-6 sources before writing an email. We collapse that into one click. Net fewer tabs, not more.", is_conflict: true, conflict_id: "Cognitive Load Reducer", sdr_reasoning: "The prospect's objection isn't about tools — it's about cognitive load. Instead of defending the tool, reframe it as a cognitive load REDUCER. Show that it eliminates steps rather than adding them. This flips the narrative from 'another tool' to 'fewer steps.'"},
+          {role: "client", text: "Okay that's a different pitch than what I usually hear. Can you show me what that workflow actually looks like?"},
+          {role: "sdr", text: "Absolutely. I'll walk you through a live side-by-side — your current workflow vs. with us. Takes 15 minutes and you'll see the difference immediately."},
+          {role: "client", text: "Let's do Thursday afternoon."},
+        ],
+        outcome: "meeting_booked",
+        objections_handled: [{
+          objection: "More tools slow reps down with cognitive load and context switching",
+          strategy: "Reframe the tool as a cognitive load reducer that collapses multiple research steps into one, resulting in fewer tabs not more",
+          skill_name: "Cognitive Load Reducer"
+        }],
+      },
     };
 
     async function runDemoBatch(repName, company, productDesc) {
       // Manager thinking
       handleSSEEvent('manager_thinking', {message: `Analyzing ${leads.length} leads and their company profiles...`});
-      await sleep(1200);
+      await sleep(2400);
 
       // Manager plan
       handleSSEEvent('manager_plan', DEMO_MANAGER);
-      await sleep(600);
+      await sleep(1200);
 
       // Create employees
       for (const emp of DEMO_MANAGER.employees) {
         handleSSEEvent('employee_created', {employee: emp});
-        await sleep(500);
+        await sleep(1000);
       }
 
-      await sleep(400);
+      await sleep(800);
 
       // Process all employees in PARALLEL
       var demoSkillCounter = 0;
@@ -2100,10 +2164,10 @@
 
           // Status: researching
           handleSSEEvent('employee_status', {employeeId: emp.id, leadIdx, stage: 'researching company'});
-          await sleep(800 + Math.random() * 400);
+          await sleep(1600 + Math.random() * 800);
 
           handleSSEEvent('employee_status', {employeeId: emp.id, leadIdx, stage: 'starting conversation'});
-          await sleep(400);
+          await sleep(800);
 
           // Stream conversation messages with tool calls injected
           const conv = DEMO_CONVERSATIONS[leadIdx];
@@ -2113,11 +2177,11 @@
               var nextMsg = conv.messages[mi + 1];
 
               handleSSEEvent('conversation_message', {employeeId: emp.id, leadIdx, message: msg});
-              await sleep(500 + Math.random() * 500);
+              await sleep(1000 + Math.random() * 1000);
 
               // After a client objection, inject a tool_call BEFORE the SDR response
               if (msg.is_conflict && msg.role === 'client' && nextMsg && nextMsg.role === 'sdr') {
-                await sleep(300);
+                await sleep(600);
                 if (nextMsg.skill_applied) {
                   // use_skill tool call — applying a learned technique
                   var skillObj = learnedSkills.find(function(s){return s.skill_name === nextMsg.skill_applied;});
@@ -2139,9 +2203,9 @@
                   });
                   handleSSEEvent('timeline_event', {event: {event_type:'skill_extracted', agent_name:emp.name, lead_name:leads[leadIdx]?.name||'', detail:'report_new_skill(' + (nextMsg.conflict_id||'') + ') — ' + (objSkill.strategy||'')}});
                 }
-                await sleep(600);
+                await sleep(1200);
                 handleSSEEvent('timeline_event', {event: {event_type:'resolution', agent_name:emp.name, lead_name:leads[leadIdx]?.name||'', detail:'Resolved using: ' + (nextMsg.conflict_id||'')}});
-                await sleep(200);
+                await sleep(400);
               }
             }
 
@@ -2158,24 +2222,24 @@
               "Interesting idea, but too aggressive for our brand voice.",
             ];
             for (const skill of conv.objections_handled) {
-              if (!learnedSkills.find(s => s.skill_name === skill.skill_name)) {
+              if (!learnedSkills.find(s => s.skill_name === skill.skill_name) && !rejectedSkills.find(s => s.skill_name === skill.skill_name)) {
                 demoSkillCounter++;
 
                 // Employee discovers
                 handleSSEEvent('skill_learned', {employeeId: emp.id, skill});
                 handleSSEEvent('timeline_event', {event: {event_type:'skill_extracted', agent_name:emp.name, lead_name:leads[leadIdx]?.name||'', detail:'Learned: ' + skill.skill_name + ' — ' + skill.strategy}});
-                await sleep(300);
+                await sleep(600);
 
                 // Johnny reviews
                 handleSSEEvent('manager_reviewing_skill', {employeeId: emp.id, employeeName: emp.name, skill});
-                await sleep(1000);
+                await sleep(2000);
 
-                var isRejected = demoSkillCounter % 3 === 0;
+                var isRejected = demoSkillCounter === 5;
                 if (isRejected) {
                   var rejectMsg = demoRejectMsgs[demoSkillCounter % demoRejectMsgs.length];
                   handleSSEEvent('manager_rejected_skill', {employeeId: emp.id, employeeName: emp.name, skill, reason: rejectMsg});
                   handleSSEEvent('timeline_event', {event: {event_type:'skill_rejected', agent_name:'Johnny', lead_name:leads[leadIdx]?.name||'', detail:'Rejected "' + skill.skill_name + '" from ' + emp.name + ' — ' + rejectMsg}});
-                  await sleep(400);
+                  await sleep(800);
                   handleSSEEvent('manager_broadcast', {
                     message: `Johnny reviewed "${skill.skill_name}" from ${emp.name} but decided to pass — ${rejectMsg}`,
                     skill
@@ -2184,7 +2248,7 @@
                   var approveMsg = demoApprovalMsgs[demoSkillCounter % demoApprovalMsgs.length];
                   handleSSEEvent('manager_approved_skill', {employeeId: emp.id, employeeName: emp.name, skill, approvalMessage: approveMsg});
                   handleSSEEvent('timeline_event', {event: {event_type:'skill_extracted', agent_name:'Johnny', lead_name:leads[leadIdx]?.name||'', detail:'Approved "' + skill.skill_name + '" — ' + approveMsg}});
-                  await sleep(300);
+                  await sleep(600);
                   handleSSEEvent('teaching_moment', {
                     teacherName: 'Johnny',
                     teacherId: 'manager',
@@ -2193,19 +2257,19 @@
                     timestamp: Date.now()/1000,
                   });
                   handleSSEEvent('timeline_event', {event: {event_type:'skill_shared', agent_name:'Johnny', lead_name:leads[leadIdx]?.name||'', detail:'Johnny is teaching "' + skill.skill_name + '" to the team', shared_with:otherEmps.map(function(e){return e.name;})}});
-                  await sleep(400);
+                  await sleep(800);
                   handleSSEEvent('manager_broadcast', {
                     message: `Johnny approved "${skill.skill_name}" from ${emp.name} and is teaching it to the team.`,
                     skill
                   });
                 }
-                await sleep(600);
+                await sleep(1200);
               }
             }
 
             // Build result compatible with review screen
             const result = {
-              fitScore: [9, 8, 7, 9, 7][leadIdx] || 7,
+              fitScore: [9, 8, 7, 9, 7, 8, 8][leadIdx] || 7,
               fitReason: emp.rationale,
               research: DEMO_RESULTS[leads[leadIdx]?.company]?.research || {
                 snapshot: 'Fast-growing company', signal: 'Expanding sales team',
@@ -2217,7 +2281,7 @@
             handleSSEEvent('lead_complete', {employeeId: emp.id, leadIdx, result});
           }
 
-          await sleep(300);
+          await sleep(600);
         }
       }
 
