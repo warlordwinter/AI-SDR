@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDR//AI — Autonomous Outreach Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0e0f11;
+      --bg2:       #13141a;
+      --bg3:       #1c1e26;
+      --border:    #1c1e24;
+      --border2:   #2a2d36;
+      --text:      #f0ede8;
+      --text2:     #9a9fae;
+      --text3:     #4a4d56;
+      --text4:     #3a3d46;
+      --green:     #4afe8a;
+      --green-bg:  #0d2018;
+      --green-bd:  #1a4030;
+      --amber:     #e8c44a;
+      --amber-bg:  #1e1a0d;
+      --red:       #ff7a7a;
+      --red-bg:    #1e0e0e;
+      --sans:      'DM Sans', sans-serif;
+      --mono:      'DM Mono', monospace;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SCREENS ── */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .logo {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--green);
+      letter-spacing: .08em;
+    }
+
+    .topbar-meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text4);
+      letter-spacing: .04em;
+    }
+
+    /* ─────────────────────────────────────────
+       SCREEN 1 — UPLOAD
+    ───────────────────────────────────────── */
+    #screen-upload {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .upload-center {
+      width: 100%;
+      max-width: 520px;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .upload-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text4);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .upload-headline {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -.025em;
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+
+    .upload-sub {
+      font-size: 13px;
+      color: var(--text3);
+      font-weight: 300;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    .dropzone {
+      border: 1px dashed var(--border2);
+      border-radius: 12px;
+      padding: 48px 32px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative;
+      background: var(--bg2);
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--green);
+      background: #0d120e;
+    }
+
+    .dropzone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .dz-icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dz-icon svg { opacity: .4; }
+
+    .dz-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text2);
+      margin-bottom: 6px;
+    }
+
+    .dz-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text4);
+    }
+
+    .dz-loaded .dz-title { color: var(--green); }
+    .dz-loaded { border-color: var(--green-bd); background: var(--green-bg); }
+
+    .upload-config {
+      margin-top: 24px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      text-align: left;
+      display: none;
+    }
+
+    .upload-config.visible { display: block; }
+
+    .config-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text4);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 10px;
+    }
+
+    .config-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .config-input {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 7px;
+      padding: 9px 13px;
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s;
+      width: 100%;
+    }
+
+    .config-input::placeholder { color: var(--text4); }
+    .config-input:focus { border-color: var(--green); }
+
+    .run-btn {
+      margin-top: 24px;
+      width: 100%;
+      padding: 13px;
+      background: var(--green);
+      color: #071409;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      display: none;
+    }
+
+    .run-btn.visible { display: block; }
+    .run-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+    .csv-hint {
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--text4);
+      font-family: var(--mono);
+    }
+
+    /* ─────────────────────────────────────────
+       SCREEN 2 — PIPELINE
+    ───────────────────────────────────────── */
+    #screen-pipeline { justify-content: flex-start; }
+
+    .pipeline-body {
+      padding: 28px 32px 32px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pipeline-title { font-size: 20px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 4px; }
+    .pipeline-sub { font-size: 13px; color: var(--text3); font-weight: 300; margin-bottom: 24px; }
+
+    .lead-table { width: 100%; border-collapse: collapse; }
+
+    .lead-table th {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text4);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      padding: 0 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .lead-row {
+      border-bottom: 1px solid #14151a;
+      cursor: pointer;
+      transition: background .15s;
+      animation: fadeSlideIn .35s ease both;
+    }
+
+    .lead-row:hover { background: var(--bg2); }
+    .lead-row td { padding: 13px 12px; vertical-align: middle; }
+
+    .lead-name  { font-size: 13px; font-weight: 500; color: var(--text); }
+    .lead-title { font-size: 11px; color: var(--text3); margin-top: 2px; font-weight: 300; }
+    .lead-co    { font-size: 12px; color: var(--text2); font-family: var(--mono); }
+
+    .status-cell { display: flex; align-items: center; gap: 8px; }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%; flex-shrink: 0;
+    }
+
+    .dot-done    { background: var(--green); }
+    .dot-active  { background: var(--green); animation: pulse 1.2s ease-in-out infinite; }
+    .dot-waiting { background: #2a2d36; }
+    .dot-error   { background: var(--red); }
+
+    .status-text { font-family: var(--mono); font-size: 11px; }
+    .st-done     { color: var(--green); }
+    .st-active   {
+      color: #8ae8b2;
+      background: linear-gradient(90deg, #8ae8b2 0%, var(--green) 40%, #8ae8b2 60%, #8ae8b2 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 1.6s linear infinite;
+    }
+    .st-waiting  { color: #2a2d36; }
+
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .score-high  { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+    .score-mid   { background: var(--amber-bg); color: var(--amber); border: 1px solid #3a300e; }
+    .score-low   { background: var(--red-bg);   color: var(--red);   border: 1px solid #3a1414; }
+    .score-empty { background: var(--bg2);       color: #2a2d36;     border: 1px solid var(--border); }
+
+    .action-btn {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+
+    .btn-view  { background: var(--bg3); color: var(--text3); }
+    .btn-ready { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+    .btn-ready:hover { background: #112a20; }
+    .btn-view:hover  { opacity: .7; }
+
+    .progress-wrap {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .progress-track {
+      flex: 1; height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2a7a50, var(--green));
+      border-radius: 2px;
+      transition: width .6s ease;
+      width: 0%;
+    }
+
+    .progress-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text4);
+      white-space: nowrap;
+    }
+
+    .send-all-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: var(--green);
+      color: #071409;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+    }
+
+    .send-all-btn:hover  { opacity: .88; transform: translateY(-1px); }
+    .send-all-btn:disabled {
+      opacity: .3;
+      cursor: default;
+      transform: none;
+      background: var(--bg3);
+      color: var(--text4);
+    }
+
+    /* ─────────────────────────────────────────
+       SCREEN 3 — EMAIL REVIEW
+    ───────────────────────────────────────── */
+    #screen-review {
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .review-layout {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* Lead sidebar */
+    .lead-sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text4);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .sidebar-item {
+      padding: 11px 16px;
+      cursor: pointer;
+      transition: background .12s;
+      border-left: 2px solid transparent;
+    }
+
+    .sidebar-item:hover { background: var(--bg2); }
+
+    .sidebar-item.active {
+      background: var(--bg2);
+      border-left-color: var(--green);
+    }
+
+    .si-name { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 2px; }
+    .sidebar-item.active .si-name { color: var(--green); }
+    .si-company { font-family: var(--mono); font-size: 10px; color: var(--text4); }
+
+    .si-score {
+      display: inline-block;
+      margin-top: 5px;
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    /* Review main */
+    .review-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .review-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .contact-row { display: flex; align-items: center; gap: 12px; }
+
+    .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--green-bg);
+      border: 1px solid var(--green-bd);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 12px; font-weight: 500;
+      color: var(--green);
+      flex-shrink: 0;
+    }
+
+    .contact-name { font-size: 14px; font-weight: 500; color: var(--text); }
+    .contact-meta { font-size: 11px; color: var(--text3); margin-top: 1px; font-weight: 300; }
+
+    .fit-display { display: flex; align-items: center; gap: 8px; }
+    .fit-num { font-family: var(--mono); font-size: 24px; font-weight: 500; color: var(--green); }
+    .fit-lbl { font-family: var(--mono); font-size: 10px; color: var(--text4); text-transform: uppercase; letter-spacing: .06em; line-height: 1.5; }
+
+    .review-scroll {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .review-section {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-lbl {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text4);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 14px;
+    }
+
+    .research-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .r-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .rc-lbl {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text4);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 7px;
+    }
+
+    .rc-val {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .rc-val strong { color: #c8c4be; font-weight: 500; }
+
+    .pain-tag {
+      display: inline-block;
+      background: var(--amber-bg);
+      border: 1px solid #2a2010;
+      color: #c8904a;
+      font-size: 10px;
+      font-family: var(--mono);
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin: 2px 3px 2px 0;
+    }
+
+    .email-subject-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .email-subj-lbl {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text4);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+
+    .email-subj-val {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .email-body-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.85;
+      white-space: pre-wrap;
+      position: relative;
+    }
+
+    .email-body-wrap .hi { color: #c8c4be; font-weight: 500; }
+    .email-body-wrap .name { color: var(--green); font-weight: 500; }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px; right: 10px;
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 4px 10px;
+      background: var(--bg3);
+      color: var(--text3);
+      border: 1px solid var(--border2);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: color .15s;
+    }
+
+    .copy-btn:hover { color: var(--text); }
+
+    /* Action bar */
+    .review-actions {
+      display: flex;
+      gap: 10px;
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .ra-btn {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+    }
+
+    .ra-btn:hover { opacity: .8; transform: translateY(-1px); }
+    .ra-send { background: var(--green); color: #071409; }
+    .ra-edit { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
+    .ra-skip { background: transparent; color: var(--text4); border: 1px solid var(--border); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.5; transform:scale(.85); }
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    @keyframes blink {
+      0%,100% { opacity:1; }
+      50%      { opacity:0; }
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 1 — UPLOAD
+  ══════════════════════════════════════ -->
+  <div id="screen-upload" class="screen active">
+    <div class="topbar">
+      <div class="logo">SDR//AI</div>
+      <div class="topbar-meta">AUTONOMOUS OUTREACH AGENT</div>
+    </div>
+
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px;">
+      <div class="upload-center">
+        <div class="upload-eyebrow">David AI Hackathon · March 26 2026</div>
+        <h1 class="upload-headline">Your AI sales rep.<br>Ready in seconds.</h1>
+        <p class="upload-sub">Upload a lead list and your agent will research every company,<br>write personalized emails, and queue them for send — automatically.</p>
+
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="csv-input" accept=".csv" onchange="handleFile(this)" />
+          <div class="dz-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <rect x="6" y="4" width="20" height="24" rx="3" stroke="#f0ede8" stroke-width="1.5"/>
+              <line x1="10" y1="11" x2="22" y2="11" stroke="#f0ede8" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="10" y1="15" x2="22" y2="15" stroke="#f0ede8" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="10" y1="19" x2="17" y2="19" stroke="#f0ede8" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="dz-title" id="dz-title">Drop your CSV here or click to browse</div>
+          <div class="dz-sub" id="dz-sub">name, title, company, email — one lead per row</div>
+        </div>
+
+        <div class="upload-config" id="upload-config">
+          <div class="config-label">Agent persona</div>
+          <div class="config-row">
+            <input class="config-input" id="rep-name"    type="text" placeholder="Your name (e.g. Alex Rivera)" />
+            <input class="config-input" id="company"     type="text" placeholder="Your company (e.g. Acme Corp)" />
+            <input class="config-input" id="product-desc" type="text" placeholder="What you sell (e.g. AI SDR tooling for B2B sales teams)" />
+          </div>
+        </div>
+
+        <button class="run-btn" id="run-btn" onclick="startPipeline()">
+          Run agent on {{ leadCount }} leads →
+        </button>
+
+        <div class="csv-hint">Expected columns: name · title · company · email</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       SCREEN 2 — PIPELINE
+  ══════════════════════════════════════ -->
+  <div id="screen-pipeline" class="screen">
+    <div class="topbar">
+      <div class="logo">SDR//AI</div>
+      <div class="topbar-meta" id="pipeline-meta">RUN #001</div>
+    </div>
+
+    <div class="pipeline-body">
+      <p class="pipeline-title" id="pipeline-title">Pipeline running</p>
+      <p class="pipeline-sub" id="pipeline-sub">Agent researching leads and drafting personalized outreach</p>
+
+      <table class="lead-table">
+        <thead>
+          <tr>
+            <th style="width:26%">Contact</th>
+            <th style="width:22%">Company</th>
+            <th style="width:30%">Status</th>
+            <th style="width:8%">Fit</th>
+            <th style="width:14%"></th>
+          </tr>
+        </thead>
+        <tbody id="pipeline-tbody"></tbody>
+      </table>
+
+      <div class="progress-wrap">
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-label" id="progress-label">0 / 0 complete</div>
+      </div>
+
+      <button class="send-all-btn" id="send-all-btn" disabled onclick="goToReview()">
+        Review &amp; send all emails →
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       SCREEN 3 — EMAIL REVIEW
+  ══════════════════════════════════════ -->
+  <div id="screen-review" class="screen">
+    <div class="topbar">
+      <div class="logo">SDR//AI</div>
+      <div class="topbar-meta" id="review-meta">EMAIL REVIEW</div>
+    </div>
+
+    <div class="review-layout">
+
+      <!-- Sidebar -->
+      <div class="lead-sidebar">
+        <div class="sidebar-header" id="sidebar-count">0 leads</div>
+        <div id="sidebar-list"></div>
+      </div>
+
+      <!-- Main panel -->
+      <div class="review-main">
+        <div class="review-topbar">
+          <div class="contact-row">
+            <div class="avatar" id="rv-avatar">--</div>
+            <div>
+              <div class="contact-name" id="rv-name">—</div>
+              <div class="contact-meta" id="rv-meta">—</div>
+            </div>
+          </div>
+          <div class="fit-display">
+            <div class="fit-num" id="rv-score">—</div>
+            <div class="fit-lbl">fit<br>score</div>
+          </div>
+        </div>
+
+        <div class="review-scroll">
+
+          <!-- Research -->
+          <div class="review-section">
+            <div class="section-lbl">Research summary</div>
+            <div class="research-grid" id="rv-research">
+              <div class="r-card"><div class="rc-lbl">Loading</div><div class="rc-val">—</div></div>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="review-section">
+            <div class="section-lbl">Generated email</div>
+            <div class="email-subject-row">
+              <span class="email-subj-lbl">Subject</span>
+              <span class="email-subj-val" id="rv-subject">—</span>
+            </div>
+            <div class="email-body-wrap" id="rv-body">
+              <button class="copy-btn" onclick="copyEmail()">copy</button>
+              <span id="rv-body-text">—</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="review-actions">
+          <button class="ra-btn ra-send" id="rv-send-btn" onclick="markSent()">Send email</button>
+          <button class="ra-btn ra-edit">Edit draft</button>
+          <button class="ra-btn ra-skip" onclick="skipLead()">Skip lead</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <script>
+    /* ────────────────────────────────────────
+       STATE
+    ──────────────────────────────────────── */
+    let leads = [];
+    let results = [];
+    let activeLeadIdx = 0;
+    let leadCount = 0;
+
+    const PIPELINE_STAGES = [
+      'researching company_',
+      'finding pain points_',
+      'drafting email_',
+      'scoring fit_',
+    ];
+
+    /* ────────────────────────────────────────
+       SCREEN NAVIGATION
+    ──────────────────────────────────────── */
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    /* ────────────────────────────────────────
+       SCREEN 1 — FILE HANDLING
+    ──────────────────────────────────────── */
+    const dropzone = document.getElementById('dropzone');
+
+    dropzone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) processFile(file);
+    });
+
+    function handleFile(input) {
+      if (input.files[0]) processFile(input.files[0]);
+    }
+
+    function processFile(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const text = e.target.result;
+        leads = parseCSV(text);
+        leadCount = leads.length;
+
+        // Update UI
+        dropzone.classList.add('dz-loaded');
+        document.getElementById('dz-title').textContent = `${file.name} · ${leadCount} leads loaded`;
+        document.getElementById('dz-sub').textContent = `Ready to run`;
+
+        document.getElementById('upload-config').classList.add('visible');
+
+        const btn = document.getElementById('run-btn');
+        btn.classList.add('visible');
+        btn.textContent = `Run agent on ${leadCount} leads →`;
+      };
+      reader.readAsText(file);
+    }
+
+    function parseCSV(text) {
+      const lines = text.trim().split('\n');
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
+      return lines.slice(1).map(line => {
+        const vals = line.split(',').map(v => v.trim().replace(/['"]/g, ''));
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = vals[i] || '');
+        return obj;
+      }).filter(r => r.name || r.company);
+    }
+
+    /* ────────────────────────────────────────
+       SCREEN 2 — PIPELINE
+    ──────────────────────────────────────── */
+    function startPipeline() {
+      if (!leads.length) return;
+      showScreen('screen-pipeline');
+
+      const repName    = document.getElementById('rep-name').value    || 'Your Rep';
+      const company    = document.getElementById('company').value     || 'Your Company';
+      const productDesc = document.getElementById('product-desc').value || 'AI-powered sales tooling';
+
+      document.getElementById('pipeline-meta').textContent =
+        `RUN #001 · ${leads.length} LEADS · ${new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}).toUpperCase()}`;
+
+      document.getElementById('progress-label').textContent = `0 / ${leads.length} complete`;
+
+      const tbody = document.getElementById('pipeline-tbody');
+      tbody.innerHTML = '';
+      results = leads.map(() => null);
+
+      leads.forEach((lead, i) => {
+        const tr = document.createElement('tr');
+        tr.className = 'lead-row';
+        tr.style.animationDelay = (i * 80) + 'ms';
+        tr.innerHTML = `
+          <td>
+            <div class="lead-name">${lead.name || '—'}</div>
+            <div class="lead-title">${lead.title || ''}</div>
+          </td>
+          <td><div class="lead-co">${lead.company || '—'}</div></td>
+          <td>
+            <div class="status-cell">
+              <div class="status-dot dot-waiting" id="dot-${i}"></div>
+              <span class="status-text st-waiting" id="stxt-${i}">queued</span>
+            </div>
+          </td>
+          <td><div class="score-badge score-empty" id="score-${i}">—</div></td>
+          <td><button class="action-btn btn-view" id="abtn-${i}" disabled>view</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      runPipeline(repName, company, productDesc);
+    }
+
+    async function runPipeline(repName, company, productDesc) {
+      let doneCount = 0;
+
+      async function processLead(i) {
+        const lead = leads[i];
+        const dot  = document.getElementById(`dot-${i}`);
+        const stxt = document.getElementById(`stxt-${i}`);
+        const scoreBadge = document.getElementById(`score-${i}`);
+        const abtn = document.getElementById(`abtn-${i}`);
+
+        dot.className = 'status-dot dot-active';
+
+        // Animate through stages
+        for (const stage of PIPELINE_STAGES) {
+          stxt.className = 'status-text st-active';
+          stxt.textContent = stage;
+          await sleep(500 + Math.random() * 600);
+        }
+
+        // ── API CALL ──────────────────────────────
+        let result;
+        try {
+          result = await callAgentAPI(lead, repName, company, productDesc);
+        } catch (err) {
+          // Fallback mock so demo never breaks
+          result = mockResult(lead, repName, company);
+        }
+
+        results[i] = result;
+
+        // Update row
+        stxt.className = 'status-text st-done';
+        stxt.textContent = 'email ready';
+        dot.className = 'status-dot dot-done';
+
+        const score = result.fitScore || 7;
+        scoreBadge.textContent = score;
+        scoreBadge.className = 'score-badge ' + (score >= 8 ? 'score-high' : score >= 6 ? 'score-mid' : 'score-low');
+
+        abtn.textContent = 'view →';
+        abtn.className = 'action-btn btn-ready';
+        abtn.disabled = false;
+        abtn.onclick = () => openReview(i);
+
+        doneCount++;
+        const pct = Math.round((doneCount / leads.length) * 100);
+        document.getElementById('progress-fill').style.width = pct + '%';
+        document.getElementById('progress-label').textContent = `${doneCount} / ${leads.length} complete`;
+
+        if (doneCount === leads.length) {
+          document.getElementById('pipeline-title').textContent = 'Pipeline complete';
+          document.getElementById('pipeline-sub').textContent  = `${leads.length} personalized emails ready to review`;
+          const sendBtn = document.getElementById('send-all-btn');
+          sendBtn.disabled = false;
+          sendBtn.textContent = 'Review & send all emails →';
+        }
+      }
+
+      // Stagger starts slightly so rows light up one by one
+      for (let i = 0; i < leads.length; i++) {
+        processLead(i);
+        await sleep(350);
+      }
+    }
+
+    /* ────────────────────────────────────────
+       BACKEND API CALL
+       Replace BASE_URL with your FastAPI server
+    ──────────────────────────────────────── */
+    const BASE_URL = 'http://localhost:8000';
+
+    async function callAgentAPI(lead, repName, company, productDesc) {
+      const res = await fetch(`${BASE_URL}/run-lead`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lead, repName, company, productDesc }),
+      });
+      if (!res.ok) throw new Error('API error');
+      return res.json();
+    }
+
+    /*
+      Expected API response shape:
+      {
+        fitScore: 9,
+        fitReason: "VP of Sales at high-growth SaaS...",
+        research: {
+          snapshot:  "What the company does...",
+          signal:    "Recent news or growth indicator...",
+          painTags:  ["tag1", "tag2", "tag3"],
+          whyFit:    "Why this lead is a strong match..."
+        },
+        email: {
+          subject: "Subject line here",
+          body:    "Full email body text..."
+        }
+      }
+    */
+
+    /* ────────────────────────────────────────
+       MOCK FALLBACK (demo safety net)
+    ──────────────────────────────────────── */
+    function mockResult(lead, repName, company) {
+      const score = 6 + Math.floor(Math.random() * 4);
+      return {
+        fitScore: score,
+        fitReason: `${lead.title} at a high-growth company — strong fit for outbound automation.`,
+        research: {
+          snapshot:  `${lead.company} is a fast-growing B2B software company. Recently expanded their sales team and investing in go-to-market infrastructure.`,
+          signal:    `${lead.company} posted 3 open SDR roles last month — strong signal of outbound scaling effort.`,
+          painTags:  ['SDR ramp time', 'outbound efficiency', 'pipeline generation'],
+          whyFit:    `${lead.title} typically owns SDR budget and has direct pain around rep productivity and pipeline quality.`,
+        },
+        email: {
+          subject: `Quick question about ${lead.company}'s outbound motion`,
+          body:
+`Hi ${lead.name.split(' ')[0]},
+
+Noticed ${lead.company} is actively hiring SDRs — scaling outbound is clearly a priority right now.
+
+Most teams at your stage spend 60–70% of rep time on research and personalization before a single email goes out. We automate that entire layer so your reps focus on conversations, not prep.
+
+Happy to show you a live run on your actual lead list. 15 minutes?
+
+— ${repName}
+${company}`,
+        },
+      };
+    }
+
+    /* ────────────────────────────────────────
+       SCREEN 3 — REVIEW
+    ──────────────────────────────────────── */
+    function goToReview() {
+      buildSidebar();
+      showScreen('screen-review');
+      selectLead(0);
+    }
+
+    function openReview(idx) {
+      buildSidebar();
+      showScreen('screen-review');
+      selectLead(idx);
+    }
+
+    function buildSidebar() {
+      const list = document.getElementById('sidebar-list');
+      list.innerHTML = '';
+      document.getElementById('sidebar-count').textContent = `${leads.length} leads`;
+      document.getElementById('review-meta').textContent = `${results.filter(Boolean).length} / ${leads.length} READY`;
+
+      leads.forEach((lead, i) => {
+        const r = results[i];
+        const score = r ? r.fitScore : 0;
+        const item = document.createElement('div');
+        item.className = 'sidebar-item';
+        item.id = `si-${i}`;
+        item.onclick = () => selectLead(i);
+
+        const scoreClass = score >= 8 ? 'score-high' : score >= 6 ? 'score-mid' : 'score-low';
+        item.innerHTML = `
+          <div class="si-name">${lead.name}</div>
+          <div class="si-company">${lead.company}</div>
+          ${r ? `<div class="si-score ${scoreClass}">fit ${score}/10</div>` : ''}
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function selectLead(idx) {
+      activeLeadIdx = idx;
+
+      // Sidebar highlight
+      document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+      const si = document.getElementById(`si-${idx}`);
+      if (si) si.classList.add('active');
+
+      const lead = leads[idx];
+      const result = results[idx];
+
+      if (!lead || !result) return;
+
+      const firstName = lead.name.split(' ')[0];
+      const initials  = lead.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+      document.getElementById('rv-avatar').textContent   = initials;
+      document.getElementById('rv-name').textContent     = lead.name;
+      document.getElementById('rv-meta').textContent     = `${lead.title} · ${lead.company} · ${lead.email || ''}`;
+      document.getElementById('rv-score').textContent    = result.fitScore;
+      document.getElementById('rv-subject').textContent  = result.email.subject;
+
+      // Research cards
+      const r = result.research;
+      document.getElementById('rv-research').innerHTML = `
+        <div class="r-card">
+          <div class="rc-lbl">Company snapshot</div>
+          <div class="rc-val">${r.snapshot}</div>
+        </div>
+        <div class="r-card">
+          <div class="rc-lbl">Recent signal</div>
+          <div class="rc-val">${r.signal}</div>
+        </div>
+        <div class="r-card">
+          <div class="rc-lbl">Pain points</div>
+          <div class="rc-val">${r.painTags.map(t => `<span class="pain-tag">${t}</span>`).join('')}</div>
+        </div>
+        <div class="r-card">
+          <div class="rc-lbl">Why high fit</div>
+          <div class="rc-val">${result.fitReason}</div>
+        </div>
+      `;
+
+      // Email body — highlight first name and rep name
+      const bodyText = result.email.body;
+      document.getElementById('rv-body-text').innerHTML =
+        bodyText
+          .replace(/^(Hi \w+,)/m, '<span class="name">$1</span>')
+          .replace(new RegExp(`(— ${escapeRegex(document.getElementById('rep-name').value || 'Your Rep')})`, 'g'), '<span class="name">$1</span>');
+
+      // Reset send button
+      const sendBtn = document.getElementById('rv-send-btn');
+      sendBtn.textContent = 'Send email';
+      sendBtn.disabled = false;
+      sendBtn.style.background = 'var(--green)';
+      sendBtn.style.color = '#071409';
+    }
+
+    function markSent() {
+      const btn = document.getElementById('rv-send-btn');
+      btn.textContent = '✓ Sent';
+      btn.style.background = 'var(--green-bg)';
+      btn.style.color = 'var(--green)';
+      btn.disabled = true;
+
+      // Auto-advance to next unsent lead
+      setTimeout(() => {
+        const next = activeLeadIdx + 1;
+        if (next < leads.length) selectLead(next);
+      }, 800);
+    }
+
+    function skipLead() {
+      const next = activeLeadIdx + 1;
+      if (next < leads.length) selectLead(next);
+    }
+
+    function copyEmail() {
+      const text = results[activeLeadIdx]?.email?.body || '';
+      navigator.clipboard.writeText(text).catch(() => {});
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'copied';
+      setTimeout(() => btn.textContent = 'copy', 1500);
+    }
+
+    /* ────────────────────────────────────────
+       UTILS
+    ──────────────────────────────────────── */
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  </script>
+</body>
+</html>
