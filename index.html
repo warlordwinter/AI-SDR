@@ -1478,6 +1478,7 @@
       </div>
       <div class="topbar-right">
         <button class="view-seq-btn" id="view-seq-btn" onclick="goToSequence()">View sequences →</button>
+        <button class="view-seq-btn" onclick="goToAnalytics()">Analytics →</button>
         <div class="demo-toggle" onclick="toggleDemoMode()">
           <span class="demo-dot" id="demo-dot-3"></span>
           <span class="demo-toggle-label">DEMO MODE</span>
@@ -1700,6 +1701,8 @@
     let leadCount = 0;
     let demoMode = false;
     let sentLeads = new Set();
+    let skippedLeads = new Set();
+    let editMode = false;
     let smtpConfigured = false;
 
     const PIPELINE_STAGES = [
@@ -2529,6 +2532,9 @@ ${company}`,
           .replace(/^(Hi \w+,)/m, '<span class="name">$1</span>')
           .replace(new RegExp(`(— ${escapeRegex(document.getElementById('rep-name').value || 'Your Rep')})`, 'g'), '<span class="name">$1</span>');
 
+      // Exit edit mode when switching leads
+      if (editMode) toggleEditMode();
+
       // Reset send button based on sent state
       const sendBtn = document.getElementById('rv-send-btn');
       if (sentLeads.has(idx)) {
@@ -2542,6 +2548,11 @@ ${company}`,
         sendBtn.style.background = 'var(--green)';
         sendBtn.style.color = '#071409';
       }
+
+      // Show send-all button if SMTP configured and there are unsent leads
+      const sendAllBtn = document.getElementById('rv-send-all-btn');
+      const unsentCount = leads.filter((_, i) => !sentLeads.has(i) && !skippedLeads.has(i) && results[i]).length;
+      sendAllBtn.style.display = (smtpConfigured && !demoMode && unsentCount > 1) ? 'inline-block' : 'none';
     }
 
     async function markSent() {
@@ -2607,6 +2618,7 @@ ${company}`,
     }
 
     function skipLead() {
+      skippedLeads.add(activeLeadIdx);
       const next = activeLeadIdx + 1;
       if (next < leads.length) selectLead(next);
     }
@@ -2719,6 +2731,225 @@ Either way, no hard feelings. Wishing you and the team a strong quarter.
     function togglePreview(id) {
       const el = document.getElementById(id);
       el.classList.toggle('open');
+    }
+
+    /* ────────────────────────────────────────
+       EMAIL EDITING
+    ──────────────────────────────────────── */
+    function toggleEditMode() {
+      editMode = !editMode;
+      const subjectDisplay = document.getElementById('rv-subject');
+      const subjectEdit = document.getElementById('rv-subject-edit');
+      const bodyDisplay = document.getElementById('rv-body-text');
+      const bodyEdit = document.getElementById('rv-body-edit');
+      const editBtn = document.getElementById('rv-edit-btn');
+      const result = results[activeLeadIdx];
+
+      if (editMode) {
+        // Enter edit mode
+        subjectEdit.value = result.email.subject;
+        bodyEdit.value = result.email.body;
+        subjectDisplay.style.display = 'none';
+        subjectEdit.style.display = 'block';
+        bodyDisplay.style.display = 'none';
+        bodyEdit.style.display = 'block';
+        editBtn.textContent = 'Save edits';
+        editBtn.style.background = 'var(--green)';
+        editBtn.style.color = '#071409';
+        subjectEdit.focus();
+      } else {
+        // Save and exit edit mode
+        result.email.subject = subjectEdit.value;
+        result.email.body = bodyEdit.value;
+        subjectDisplay.textContent = result.email.subject;
+        const bodyText = result.email.body;
+        bodyDisplay.innerHTML = bodyText
+          .replace(/^(Hi \w+,)/m, '<span class="name">$1</span>')
+          .replace(new RegExp(`(— ${escapeRegex(document.getElementById('rep-name').value || 'Your Rep')})`, 'g'), '<span class="name">$1</span>');
+        subjectDisplay.style.display = '';
+        subjectEdit.style.display = 'none';
+        bodyDisplay.style.display = '';
+        bodyEdit.style.display = 'none';
+        editBtn.textContent = 'Edit draft';
+        editBtn.style.background = 'var(--bg3)';
+        editBtn.style.color = 'var(--text2)';
+      }
+    }
+
+    /* ────────────────────────────────────────
+       SEND ALL EMAILS
+    ──────────────────────────────────────── */
+    async function sendAllEmails() {
+      const btn = document.getElementById('rv-send-all-btn');
+      const repName = document.getElementById('rep-name').value || 'Your Rep';
+
+      // Collect unsent leads with results
+      const toSend = [];
+      leads.forEach((lead, i) => {
+        if (!sentLeads.has(i) && !skippedLeads.has(i) && results[i]) {
+          toSend.push(i);
+        }
+      });
+
+      if (toSend.length === 0) return;
+
+      btn.disabled = true;
+      let sent = 0;
+      let failed = 0;
+
+      for (const idx of toSend) {
+        btn.textContent = `Sending ${sent + 1}/${toSend.length}...`;
+        const lead = leads[idx];
+        const result = results[idx];
+
+        try {
+          const resp = await fetch('http://localhost:8000/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: lead.email,
+              subject: result.email.subject,
+              body: result.email.body,
+              repName: repName,
+            }),
+          });
+          const data = await resp.json();
+          if (!resp.ok) throw new Error(data.detail || data.error);
+          sentLeads.add(idx);
+          sent++;
+        } catch (err) {
+          console.error(`Failed to send to ${lead.email}:`, err);
+          failed++;
+        }
+
+        // Update sidebar item to show sent state
+        updateSeqButton();
+      }
+
+      // Update UI
+      if (failed === 0) {
+        btn.textContent = `✓ All ${sent} sent`;
+        btn.style.background = 'var(--green-bg)';
+        btn.style.color = 'var(--green)';
+      } else {
+        btn.textContent = `${sent} sent, ${failed} failed`;
+        btn.style.background = 'var(--red-bg)';
+        btn.style.color = 'var(--red)';
+        btn.disabled = false;
+      }
+
+      // Refresh current lead view
+      selectLead(activeLeadIdx);
+
+      // Re-enable after delay
+      setTimeout(() => {
+        const unsent = leads.filter((_, i) => !sentLeads.has(i) && !skippedLeads.has(i) && results[i]).length;
+        if (unsent > 0) {
+          btn.textContent = `Send all (${unsent})`;
+          btn.style.background = 'var(--amber)';
+          btn.style.color = '#1a1400';
+          btn.disabled = false;
+        } else {
+          btn.style.display = 'none';
+        }
+      }, 2000);
+    }
+
+    /* ────────────────────────────────────────
+       SCREEN 6 — ANALYTICS DASHBOARD
+    ──────────────────────────────────────── */
+    function goToAnalytics() {
+      const totalLeads = leads.length;
+      const sentCount = sentLeads.size;
+      const skippedCount = skippedLeads.size;
+      const pendingCount = totalLeads - sentCount - skippedCount;
+
+      // Fit score stats
+      let totalFit = 0;
+      let fitCount = 0;
+      results.forEach(r => {
+        if (r && r.fitScore) { totalFit += r.fitScore; fitCount++; }
+      });
+      const avgFit = fitCount > 0 ? (totalFit / fitCount).toFixed(1) : '—';
+
+      // Stats cards
+      document.getElementById('analytics-stats').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-num default">${totalLeads}</div>
+          <div class="stat-label">Total leads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num green">${sentCount}</div>
+          <div class="stat-label">Emails sent</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num amber">${pendingCount}</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num red">${skippedCount}</div>
+          <div class="stat-label">Skipped</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num green">${avgFit}</div>
+          <div class="stat-label">Avg fit score</div>
+        </div>
+      `;
+
+      // Funnel bars
+      const pct = n => totalLeads > 0 ? Math.round((n / totalLeads) * 100) : 0;
+      document.getElementById('analytics-funnel').innerHTML = `
+        <div class="funnel-bar-wrap">
+          <div class="funnel-bar-label">Processed</div>
+          <div class="funnel-bar-track">
+            <div class="funnel-bar-fill green" style="width:${pct(fitCount)}%">${pct(fitCount)}%</div>
+          </div>
+        </div>
+        <div class="funnel-bar-wrap">
+          <div class="funnel-bar-label">Sent</div>
+          <div class="funnel-bar-track">
+            <div class="funnel-bar-fill green" style="width:${pct(sentCount)}%">${pct(sentCount)}%</div>
+          </div>
+        </div>
+        <div class="funnel-bar-wrap">
+          <div class="funnel-bar-label">Pending</div>
+          <div class="funnel-bar-track">
+            <div class="funnel-bar-fill amber" style="width:${pct(pendingCount)}%">${pct(pendingCount)}%</div>
+          </div>
+        </div>
+        <div class="funnel-bar-wrap">
+          <div class="funnel-bar-label">Skipped</div>
+          <div class="funnel-bar-track">
+            <div class="funnel-bar-fill red" style="width:${pct(skippedCount)}%">${pct(skippedCount)}%</div>
+          </div>
+        </div>
+      `;
+
+      // Lead breakdown table
+      const tbody = document.getElementById('analytics-tbody');
+      tbody.innerHTML = '';
+      leads.forEach((lead, i) => {
+        const result = results[i];
+        let status, statusClass;
+        if (sentLeads.has(i)) { status = 'Sent'; statusClass = 'sent'; }
+        else if (skippedLeads.has(i)) { status = 'Skipped'; statusClass = 'skipped'; }
+        else { status = 'Pending'; statusClass = 'pending'; }
+
+        const fitScore = result?.fitScore || '—';
+        const subject = result?.email?.subject || '—';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${lead.name}</td>
+          <td>${lead.company}</td>
+          <td>${fitScore}/10</td>
+          <td><span class="status-badge ${statusClass}">${status}</span></td>
+          <td>${subject}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      showScreen('screen-analytics');
     }
 
     /* ────────────────────────────────────────
